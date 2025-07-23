@@ -1,0 +1,30 @@
+<Window x:Class="QuanLyShopQuanAoWPF.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Hệ Thống Quản Lý Shop Quần Áo" Height="503" Width="985" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <!-- Ảnh nền bên trái -->
+        <Image Source="D:\QuanLyBanHang\QuanLyBanHang\Image\banner-dangnhap.jpg" Width="500" Height="494" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <!-- Banner/logo trên phải -->
+        <Image Source="D:\QuanLyBanHang\QuanLyBanHang\Image\logo.png" Width="220" Height="60" HorizontalAlignment="Left" Margin="530,30,0,0" VerticalAlignment="Top"/>
+        <!-- Tiêu đề Đăng Nhập -->
+        <TextBlock Text="Đăng Nhập" FontSize="24" FontWeight="Bold" Margin="660,120,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        <!-- Nhóm nhập liệu -->
+        <StackPanel Orientation="Vertical" Margin="550,180,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="400">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <Label Content="Tài khoản:" Width="90"/>
+                <TextBox x:Name="txtTK" Width="298"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <Label Content="Mật khẩu:" Width="90"/>
+                <PasswordBox x:Name="txtMK" Width="298"/>
+            </StackPanel>
+            <CheckBox x:Name="chk_HienMK" Content="Hiện mật khẩu" Margin="0,0,0,10" Width="140"/>
+            <Button x:Name="btnDN" Content="Đăng nhập" Width="160" Height="60" Background="#404040" Foreground="White" FontSize="16" Margin="0,0,0,10"/>
+            <Button x:Name="button1" Content="Quên mật khẩu" Width="129" Height="32" Margin="210,0,0,0"/>
+        </StackPanel>
+        <!-- Đăng ký -->
+        <TextBlock Text="Bạn chưa có tài khoản?" Margin="560,432,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="14"/>
+        <Button x:Name="btnDK" Content="Đăng ký ngay" Width="150" Height="40" Margin="785,424,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Background="Silver"/>
+    </Grid>
+</Window> 
