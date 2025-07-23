@@ -1,13 +1,10 @@
-﻿using System.Windows;
+using System.Windows;
 
 namespace QuanLyShopQuanAoWPF
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+    public partial class SharedFormWindow : Window
     {
-        public MainWindow()
+        public SharedFormWindow()
         {
             InitializeComponent();
         }
@@ -53,4 +50,4 @@ namespace QuanLyShopQuanAoWPF
             this.Close();
         }
     }
-}
+} 
