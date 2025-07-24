@@ -94,7 +94,7 @@ namespace QuanLyShopQuanAoWPF
                 dgDanhMuc.ItemsSource = loaiSps;
                 cboDanhMuc.ItemsSource = loaiSps; // Đổ dữ liệu vào ComboBox Danh mục
                 cboDanhMuc.DisplayMemberPath = "TenL"; // Hiển thị tên loại
-                cboDanhMuc.SelectedValuePath = "MaLSP"; // Giá trị thực là mã loại
+                cboDanhMuc.SelectedValuePath = "MaL"; // Giá trị thực là mã loại
             }
             catch (Exception ex)
             {
