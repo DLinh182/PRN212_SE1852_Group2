@@ -11,7 +11,7 @@ public class LoaiSpService : ILoaiSpService {
     public void Update(Loaisp loai) {
         repo.Update(loai);
     }
-    public void Delete(int id) {
+    public void Delete(string id) {
         repo.Delete(id);
     }
     public Loaisp GetById(int id) {

@@ -27,7 +27,7 @@ public class LoaiSpDAO
         _context.SaveChanges();
     }
 
-    public void Delete(int id)
+    public void Delete(string id)
     {
         var loai = _context.Loaisps.Find(id);
         if (loai != null)

@@ -11,7 +11,7 @@ public class LoaiSpRepository : ILoaiSpRepository {
     public void Update(Loaisp loai) {
         dao.Update(loai);
     }
-    public void Delete(int id) {
+    public void Delete(string id) {
         dao.Delete(id);
     }
     public Loaisp GetById(int id) {

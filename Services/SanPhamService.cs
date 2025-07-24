@@ -1,6 +1,7 @@
-using BusinessObject;
+﻿using BusinessObject;
 
-public class SanPhamService : ISanPhamService {
+public class SanPhamService : ISanPhamService
+{
     private readonly ISanPhamRepository repo = new SanPhamRepository();
     public List<Sanpham> GetAll() {
         return repo.GetAll();
@@ -11,10 +12,14 @@ public class SanPhamService : ISanPhamService {
     public void Update(Sanpham sp) {
         repo.Update(sp);
     }
-    public void Delete(int id) {
+    public void Delete(string id) {
         repo.Delete(id);
     }
-    public Sanpham GetById(int id) {
+    public List<Sanpham> GetById(string id) {
         return repo.GetById(id);
+    }
+    public List<Sanpham> SearchByName(string tenSP)
+    {
+        return repo.SearchByName(tenSP); // Triển khai bằng cách gọi Repository
     }
 } 
