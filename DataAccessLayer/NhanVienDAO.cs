@@ -17,6 +17,8 @@ public class NhanVienDAO
 
     public void Add(Nhanvien nv)
     {
+        if (_context.Nhanviens.Any(x => x.MaNv == nv.MaNv))
+            throw new InvalidOperationException("Mã nhân viên đã tồn tại!");
         _context.Nhanviens.Add(nv);
         _context.SaveChanges();
     }
@@ -27,7 +29,7 @@ public class NhanVienDAO
         _context.SaveChanges();
     }
 
-    public void Delete(int id)
+    public void Delete(string id)
     {
         var nv = _context.Nhanviens.Find(id);
         if (nv != null)
@@ -37,7 +39,7 @@ public class NhanVienDAO
         }
     }
 
-    public Nhanvien GetById(int id)
+    public Nhanvien GetById(string id)
     {
         return _context.Nhanviens.Find(id);
     }

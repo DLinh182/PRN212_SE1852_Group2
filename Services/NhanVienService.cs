@@ -11,10 +11,10 @@ public class NhanVienService : INhanVienService {
     public void Update(Nhanvien nv) {
         repo.Update(nv);
     }
-    public void Delete(int id) {
+    public void Delete(string id) {
         repo.Delete(id);
     }
-    public Nhanvien GetById(int id) {
+    public Nhanvien GetById(string id) {
         return repo.GetById(id);
     }
 } 

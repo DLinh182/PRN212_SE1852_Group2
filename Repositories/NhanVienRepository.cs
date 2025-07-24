@@ -11,10 +11,10 @@ public class NhanVienRepository : INhanVienRepository {
     public void Update(Nhanvien nv) {
         dao.Update(nv);
     }
-    public void Delete(int id) {
+    public void Delete(string id) {
         dao.Delete(id);
     }
-    public Nhanvien GetById(int id) {
+    public Nhanvien GetById(string id) {
         return dao.GetById(id);
     }
 } 
