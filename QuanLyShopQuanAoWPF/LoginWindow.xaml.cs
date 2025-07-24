@@ -8,14 +8,12 @@ namespace QuanLyShopQuanAoWPF
         public LoginWindow()
         {
             InitializeComponent();
-            chkHienMatKhau.Checked += (s, e) => txtMatKhau.Visibility = Visibility.Collapsed;
-            chkHienMatKhau.Unchecked += (s, e) => txtMatKhau.Visibility = Visibility.Visible;
         }
 
-        private void btnDangNhap_Click(object sender, RoutedEventArgs e)
+        private void btnDN_Click(object sender, RoutedEventArgs e)
         {
-            string taiKhoan = txtTaiKhoan.Text.Trim();
-            string matKhau = txtMatKhau.Password;
+            string taiKhoan = txtTK.Text.Trim();
+            string matKhau = txtMK.Password;
             if (string.IsNullOrEmpty(taiKhoan))
             {
                 MessageBox.Show("Bạn chưa nhập tài khoản!");
@@ -30,8 +28,8 @@ namespace QuanLyShopQuanAoWPF
             if (hopLe)
             {
                 MessageBox.Show("Đăng nhập thành công!");
-                // TODO: Mở giao diện chính
-                this.DialogResult = true;
+                var main = new MainWindow();
+                main.Show();
                 this.Close();
             }
             else

@@ -1,28 +1,47 @@
 <Window x:Class="QuanLyShopQuanAoWPF.ThongTinSPWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Thông tin sản phẩm" Height="425" Width="773" WindowStartupLocation="CenterScreen">
-    <Grid Margin="20">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="3*"/>
-        </Grid.ColumnDefinitions>
-        <Image x:Name="imgSanPham" Grid.Column="0" Height="200" Width="200" Margin="0,0,20,0"/>
-        <StackPanel Grid.Column="1" VerticalAlignment="Top">
-            <TextBlock Text="THÔNG TIN SẢN PHẨM" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
-            <TextBlock Text="Mã SP:" Margin="0,0,0,2"/>
-            <TextBox x:Name="txtMaSp" IsReadOnly="True" Margin="0,0,0,6"/>
-            <TextBlock Text="Tên SP:" Margin="0,0,0,2"/>
-            <TextBox x:Name="txtTenSp" IsReadOnly="True" Margin="0,0,0,6"/>
-            <TextBlock Text="Giá bán:" Margin="0,0,0,2"/>
-            <TextBox x:Name="txtGiaBan" IsReadOnly="True" Margin="0,0,0,6"/>
-            <TextBlock Text="Số lượng tồn:" Margin="0,0,0,2"/>
-            <TextBox x:Name="txtSoLuongTon" IsReadOnly="True" Margin="0,0,0,6"/>
-            <TextBlock Text="Loại:" Margin="0,0,0,2"/>
-            <TextBox x:Name="txtLoai" IsReadOnly="True" Margin="0,0,0,6"/>
-            <TextBlock Text="Mô tả:" Margin="0,0,0,2"/>
-            <TextBox x:Name="txtMoTa" Height="60" TextWrapping="Wrap" AcceptsReturn="True" IsReadOnly="True" Margin="0,0,0,6"/>
-            <Button Content="Đóng" Width="80" HorizontalAlignment="Right" Margin="0,10,0,0" Click="BtnDong_Click"/>
-        </StackPanel>
-    </Grid>
+        Title="Thông tin sản phẩm" Height="950" Width="1000" WindowStartupLocation="CenterScreen">
+    <ScrollViewer>
+        <Grid Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="420"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <!-- Ảnh sản phẩm -->
+            <Image x:Name="imgSanPham" Width="400" Height="430" Grid.Column="0" Margin="10,3,10,0" VerticalAlignment="Top"/>
+            <!-- Thông tin bên phải -->
+            <StackPanel Grid.Column="1" Margin="10,3,0,0">
+                <!-- Tên sản phẩm -->
+                <TextBlock x:Name="lbTenSP" FontSize="24" FontWeight="Bold" Margin="0,0,0,10"/>
+                <!-- Giá sản phẩm -->
+                <TextBlock x:Name="lbGiaSP" FontSize="20" Foreground="Red" Margin="0,0,0,10"/>
+                <!-- GroupBox chọn kích cỡ -->
+                <GroupBox Header="KÍCH CỠ:" FontSize="16" Margin="0,0,0,10">
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton Content="S" GroupName="Size"/>
+                        <RadioButton Content="M" GroupName="Size" Margin="10,0,0,0"/>
+                        <RadioButton Content="L" GroupName="Size" Margin="10,0,0,0"/>
+                        <RadioButton Content="XL" GroupName="Size" Margin="10,0,0,0"/>
+                        <RadioButton Content="XXL" GroupName="Size" Margin="10,0,0,0"/>
+                    </StackPanel>
+                </GroupBox>
+                <!-- Số lượng và sản phẩm sẵn có -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="SỐ LƯỢNG:" FontSize="14" VerticalAlignment="Center"/>
+                    <TextBox x:Name="txtSoLuong" Width="60" Height="30" Margin="10,0,0,0"/>
+                    <TextBlock x:Name="lb_SP_SC" FontSize="14" Margin="20,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
+                <!-- Nút Thêm vào giỏ hàng, Huỷ -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <Button x:Name="btnThemVaoGioHang" Content="Thêm vào giỏ hàng" Width="180" Height="45" Background="Bisque" Foreground="Tomato" FontWeight="Bold" Margin="0,0,10,0"/>
+                    <Button x:Name="btnHuy" Content="Huỷ" Width="120" Height="45" Background="Tomato" Foreground="White" FontWeight="Bold"/>
+                </StackPanel>
+            </StackPanel>
+            <!-- GroupBox Thông tin sản phẩm (dưới cùng, span 2 cột) -->
+            <GroupBox Header="Thông tin sản phẩm" FontSize="16" Grid.ColumnSpan="2" Margin="10,450,10,10" VerticalAlignment="Top">
+                <TextBlock x:Name="lbTTSP" TextWrapping="Wrap" FontSize="14" Margin="10"/>
+            </GroupBox>
+        </Grid>
+    </ScrollViewer>
 </Window> 

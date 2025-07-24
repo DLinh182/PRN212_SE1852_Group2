@@ -19,12 +19,11 @@
                 <Label Content="Mật khẩu:" Width="90"/>
                 <PasswordBox x:Name="txtMK" Width="298"/>
             </StackPanel>
-            <CheckBox x:Name="chk_HienMK" Content="Hiện mật khẩu" Margin="0,0,0,10" Width="140"/>
-            <Button x:Name="btnDN" Content="Đăng nhập" Width="160" Height="60" Background="#404040" Foreground="White" FontSize="16" Margin="0,0,0,10"/>
+            <Button x:Name="btnDN" Content="Đăng nhập" Width="160" Height="33" Background="#404040" Foreground="White" FontSize="16" Margin="0,0,0,10" Click="btnDN_Click"/>
             <Button x:Name="button1" Content="Quên mật khẩu" Width="129" Height="32" Margin="210,0,0,0"/>
         </StackPanel>
         <!-- Đăng ký -->
         <TextBlock Text="Bạn chưa có tài khoản?" Margin="560,432,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="14"/>
-        <Button x:Name="btnDK" Content="Đăng ký ngay" Width="150" Height="40" Margin="785,424,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Background="Silver"/>
+        <Button x:Name="btnDK" Content="Đăng ký ngay" Width="129" Height="27" Margin="785,424,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Background="Silver"/>
     </Grid>
 </Window> 

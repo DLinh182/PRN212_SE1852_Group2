@@ -1,38 +1,91 @@
 <Window x:Class="QuanLyShopQuanAoWPF.QuanLyHoaDonWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Quản lý hóa đơn" Height="500" Width="1173" WindowStartupLocation="CenterScreen">
-    <Grid Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <TextBlock Text="QUẢN LÝ HÓA ĐƠN" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-        <DataGrid x:Name="dgHoaDon" Grid.Row="1" AutoGenerateColumns="False" Height="250" Margin="0,0,0,10">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Mã HD" Binding="{Binding MaHd}" Width="*"/>
-                <DataGridTextColumn Header="Mã NV" Binding="{Binding MaNv}" Width="*"/>
-                <DataGridTextColumn Header="Mã KH" Binding="{Binding MaKh}" Width="*"/>
-                <DataGridTextColumn Header="Ngày bán" Binding="{Binding NgayBan}" Width="*"/>
-                <DataGridTextColumn Header="Tổng tiền" Binding="{Binding TongThanhToan}" Width="*"/>
-                <DataGridTextColumn Header="Trạng thái" Binding="{Binding TrangThai}" Width="*"/>
-                <DataGridTextColumn Header="Hình thức" Binding="{Binding HinhThucThanhToan}" Width="*"/>
-            </DataGrid.Columns>
-        </DataGrid>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-            <TextBox x:Name="txtMaHd" Width="80" Margin="0,0,10,0"/>
-            <TextBox x:Name="txtMaNv" Width="80" Margin="0,0,10,0"/>
-            <TextBox x:Name="txtMaKh" Width="80" Margin="0,0,10,0"/>
-            <TextBox x:Name="txtNgayBan" Width="100" Margin="0,0,10,0"/>
-            <TextBox x:Name="txtTongTien" Width="100" Margin="0,0,10,0"/>
-            <TextBox x:Name="txtTrangThai" Width="100" Margin="0,0,10,0"/>
-            <TextBox x:Name="txtHinhThuc" Width="100" Margin="0,0,10,0"/>
-            <Button Content="Thêm" Width="70" Margin="0,0,10,0" Click="BtnThem_Click"/>
-            <Button Content="Sửa" Width="70" Margin="0,0,10,0" Click="BtnSua_Click"/>
-            <Button Content="Xóa" Width="70" Margin="0,0,10,0" Click="BtnXoa_Click"/>
-            <TextBox x:Name="txtTimKiem" Width="120" Margin="0,0,10,0"/>
-            <Button Content="Tìm" Width="60" Click="BtnTimKiem_Click"/>
-        </StackPanel>
-    </Grid>
+        xmlns:local="clr-namespace:QuanLyShopQuanAoWPF"
+        Title="Quản Lý Hoá Đơn" Height="1050" Width="1778" WindowStartupLocation="CenterScreen" WindowStyle="None">
+    <DockPanel>
+        <local:UcMenuChucNang DockPanel.Dock="Top"/>
+        <!-- Phần còn lại giữ nguyên -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="200"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <!-- Tiêu đề -->
+            <Border Grid.ColumnSpan="2" Grid.Row="0" Background="#FFF">
+                <TextBlock Text="QUẢN LÝ HOÁ ĐƠN" FontSize="28" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <!-- Panel công cụ bên phải -->
+            <StackPanel Grid.Column="1" Grid.Row="1" Background="#F5F5F5">
+                <Border BorderBrush="Gray" BorderThickness="0,0,0,1" Padding="10">
+                    <TextBlock Text="Công cụ" FontSize="18" FontWeight="Bold"/>
+                </Border>
+                <Button x:Name="btnHuy" Content="Huỷ hoá đơn" Height="50" Margin="10,10,10,0"/>
+                <Button x:Name="btnXoa" Content="Xoá hoá đơn" Height="50" Margin="10,10,10,0"/>
+                <Button x:Name="btnSua" Content="Sửa hoá đơn" Height="50" Margin="10,10,10,0"/>
+                <Button x:Name="btnLuu" Content="Lưu hoá đơn" Height="50" Margin="10,10,10,0" IsEnabled="False"/>
+                <Button x:Name="btnReset" Content="Reset công cụ" Height="50" Margin="10,10,10,0"/>
+                <Button x:Name="btnResetDuLieu" Content="Reset dữ liệu" Height="50" Margin="10,10,10,0"/>
+            </StackPanel>
+            <!-- Nội dung chính -->
+            <Grid Grid.Column="0" Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="80"/>
+                    <RowDefinition Height="405"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <!-- Thông tin hoá đơn -->
+                <Border BorderBrush="Gray" BorderThickness="0,0,0,1" Grid.Row="0" Padding="10">
+                    <TextBlock Text="Thông tin hoá đơn" FontSize="16" FontWeight="Bold"/>
+                </Border>
+                <!-- Bộ lọc và trạng thái -->
+                <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center" Margin="10,0,0,0">
+                    <TextBlock Text="Trạng thái:" VerticalAlignment="Center" FontSize="14"/>
+                    <ComboBox x:Name="cboTrangThai" Width="220" Height="30" Margin="10,0,0,0"/>
+                    <!-- Tổng doanh thu, chuyển khoản, tiền mặt -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="100,0,0,0">
+                        <TextBlock Text="Doanh thu:" FontWeight="Bold" Foreground="OrangeRed" FontSize="14" Margin="20,0,0,0"/>
+                        <TextBlock x:Name="lbTongDoanhThu" FontWeight="Bold" Foreground="Tomato" FontSize="14" Margin="5,0,0,0"/>
+                        <TextBlock Text="Chuyển khoản:" FontWeight="Bold" FontSize="14" Margin="20,0,0,0"/>
+                        <TextBlock x:Name="lbCK" FontWeight="Bold" FontSize="14" Margin="5,0,0,0"/>
+                        <TextBlock Text="Tiền mặt:" FontWeight="Bold" FontSize="14" Margin="20,0,0,0"/>
+                        <TextBlock x:Name="lbTM" FontWeight="Bold" FontSize="14" Margin="5,0,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+                <!-- DataGrid hoá đơn -->
+                <DataGrid x:Name="dgHoaDon" Grid.Row="2" AutoGenerateColumns="False" Margin="0,5,0,0" SelectionMode="Single" SelectionUnit="FullRow">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Mã hoá đơn" Binding="{Binding MaHD}"/>
+                        <DataGridTextColumn Header="Mã nhân viên" Binding="{Binding MaNV}"/>
+                        <DataGridTextColumn Header="Mã khách hàng" Binding="{Binding MaKH}"/>
+                        <DataGridTextColumn Header="Ngày bán" Binding="{Binding NgayBan}"/>
+                        <DataGridTextColumn Header="Tổng thanh toán" Binding="{Binding TongThanhToan}"/>
+                        <DataGridTextColumn Header="Trạng thái" Binding="{Binding TrangThai}"/>
+                        <DataGridTextColumn Header="Thanh Toán" Binding="{Binding HinhThucThanhToan}"/>
+                        <DataGridTextColumn Header="Ghi chú" Binding="{Binding GhiChu}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <!-- Chi tiết hoá đơn -->
+                <Border BorderBrush="Gray" BorderThickness="0,0,0,1" Grid.Row="3" Padding="10">
+                    <TextBlock Text="Chi tiết hoá đơn" FontSize="16" FontWeight="Bold"/>
+                </Border>
+                <DataGrid x:Name="dgCTHD" Grid.Row="4" AutoGenerateColumns="False" Margin="0,5,0,0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Mã hoá đơn" Binding="{Binding MaHD}"/>
+                        <DataGridTextColumn Header="Mã sản phẩm" Binding="{Binding MaSP}"/>
+                        <DataGridTextColumn Header="Size" Binding="{Binding KichCo}"/>
+                        <DataGridTextColumn Header="Số lượng" Binding="{Binding SoLuong}"/>
+                        <DataGridTextColumn Header="Giá bán" Binding="{Binding GiaBan}"/>
+                        <DataGridTextColumn Header="Thành tiền" Binding="{Binding ThanhTien}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Grid>
+    </DockPanel>
 </Window> 

@@ -1,36 +1,72 @@
 <Window x:Class="QuanLyShopQuanAoWPF.QuanLyNhapKhoWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Quản lý nhập kho" Height="500" Width="1137" WindowStartupLocation="CenterScreen">
-    <Grid Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <TextBlock Text="QUẢN LÝ NHẬP KHO" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-        <DataGrid x:Name="dgNhapKho" Grid.Row="1" AutoGenerateColumns="False" Height="250" Margin="0,0,0,10">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Mã phiếu" Binding="{Binding MaPhieu}" Width="*"/>
-                <DataGridTextColumn Header="Mã SP" Binding="{Binding MaSp}" Width="*"/>
-                <DataGridTextColumn Header="Tên SP" Binding="{Binding TenSp}" Width="2*"/>
-                <DataGridTextColumn Header="Số lượng" Binding="{Binding SoLuong}" Width="*"/>
-                <DataGridTextColumn Header="Ngày nhập" Binding="{Binding NgayNhap}" Width="*"/>
-                <DataGridTextColumn Header="Nhà cung cấp" Binding="{Binding NhaCungCap}" Width="*"/>
-            </DataGrid.Columns>
-        </DataGrid>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-            <TextBox x:Name="txtMaPhieu" Width="80" Margin="0,0,10,0"/>
-            <TextBox x:Name="txtMaSp" Width="80" Margin="0,0,10,0"/>
-            <TextBox x:Name="txtTenSp" Width="150" Margin="0,0,10,0"/>
-            <TextBox x:Name="txtSoLuong" Width="80" Margin="0,0,10,0"/>
-            <TextBox x:Name="txtNgayNhap" Width="100" Margin="0,0,10,0"/>
-            <TextBox x:Name="txtNhaCungCap" Width="120" Margin="0,0,10,0"/>
-            <Button Content="Thêm" Width="70" Margin="0,0,10,0" Click="BtnThem_Click"/>
-            <Button Content="Sửa" Width="70" Margin="0,0,10,0" Click="BtnSua_Click"/>
-            <Button Content="Xóa" Width="70" Margin="0,0,10,0" Click="BtnXoa_Click"/>
-            <TextBox x:Name="txtTimKiem" Width="120" Margin="0,0,10,0"/>
-            <Button Content="Tìm" Width="60" Click="BtnTimKiem_Click"/>
+        xmlns:local="clr-namespace:QuanLyShopQuanAoWPF"
+        Title="Quản Lý Nhập Kho" Height="820" Width="1250" WindowStartupLocation="CenterScreen">
+    <DockPanel>
+        <local:UcMenuChucNang DockPanel.Dock="Top"/>
+        <!-- GroupBox 1: Thông tin nhập hàng -->
+        <GroupBox Header="1. THÔNG TIN NHẬP HÀNG" Grid.Row="0" Grid.Column="0" Margin="10" FontSize="16">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="NHÀ CUNG CẤP" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                <ComboBox x:Name="cbNCC" Grid.Row="0" Grid.Column="1" Height="28"/>
+                <TextBlock Text="KHO HÀNG" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+                <ComboBox x:Name="cbKH" Grid.Row="1" Grid.Column="1" Height="28"/>
+                <TextBlock Text="NGÀY NHẬP" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
+                <TextBox x:Name="txtNgayNhap" Grid.Row="2" Grid.Column="1" Height="28"/>
+                <TextBlock Text="HỌ TÊN NGƯỜI NHẬP" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
+                <ComboBox x:Name="cbTen" Grid.Row="3" Grid.Column="1" Height="28"/>
+                <TextBlock Text="QUỸ" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center"/>
+                <ComboBox x:Name="cbQuy" Grid.Row="4" Grid.Column="1" Height="28"/>
+                <TextBlock Text="GHI CHÚ" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center"/>
+                <TextBox x:Name="txtGhiChu" Grid.Row="5" Grid.Column="1" Height="28"/>
+            </Grid>
+        </GroupBox>
+        <!-- GroupBox 2: Tổng chi phí/thanh toán -->
+        <GroupBox Header="2. TỔNG CHI PHÍ/THANH TOÁN" Grid.Row="0" Grid.Column="1" Margin="10" FontSize="16">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="TỔNG CỘNG" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                <TextBox x:Name="txtTongCong" Grid.Row="0" Grid.Column="1" Height="28"/>
+                <TextBlock Text="% VAT" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+                <TextBox x:Name="txtVAT" Grid.Row="1" Grid.Column="1" Height="28"/>
+                <TextBlock Text="TIỀN KHUYẾN MÃI" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
+                <TextBox x:Name="txtKhuyenMai" Grid.Row="2" Grid.Column="1" Height="28"/>
+                <TextBlock Text="QUYẾT TOÁN" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
+                <TextBox x:Name="txtQuyetToan" Grid.Row="3" Grid.Column="1" Height="28"/>
+                <TextBlock Text="ĐÃ TRẢ" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center"/>
+                <TextBox x:Name="txtDaTra" Grid.Row="4" Grid.Column="1" Height="28"/>
+            </Grid>
+        </GroupBox>
+        <!-- DataGrid -->
+        <DataGrid x:Name="dgNhapKho" Grid.Row="2" Grid.ColumnSpan="2" Margin="20,10,20,10" Height="250"/>
+        <!-- Nút Lưu và Đóng -->
+        <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,30,0">
+            <Button x:Name="btnLuu" Content="LƯU" Width="120" Height="40" Margin="0,0,10,0"/>
+            <Button x:Name="btnDong" Content="ĐÓNG" Width="120" Height="40"/>
         </StackPanel>
-    </Grid>
+    </DockPanel>
 </Window> 
