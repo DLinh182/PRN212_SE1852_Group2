@@ -24,9 +24,27 @@ public class DangNhapDAO
         _context.SaveChanges();
     }
 
-    public void Update(Dangnhap tk)
+    public void Update(Dangnhap dangnhap) // dangnhap ở đây là đối tượng mới từ UI (detached)
     {
-        _context.Dangnhaps.Update(tk);
+        // 1. Tìm thực thể Dangnhap đang được theo dõi bởi _context
+        var existingDangnhap = _context.Dangnhaps.Find(dangnhap.Matk);
+
+        if (existingDangnhap != null)
+        {
+            // 2. Nếu tìm thấy (tức là đã được theo dõi), cập nhật các thuộc tính của nó
+            // Cách này an toàn và không gây lỗi tracking
+            _context.Entry(existingDangnhap).CurrentValues.SetValues(dangnhap);
+        }
+        else
+        {
+            // 3. Nếu không tìm thấy trong cache của context, có thể nó là một detached entity
+            // hoặc Matk bị thay đổi (mà Matk là khóa chính nên không được thay đổi).
+            // Trong trường hợp cập nhật tài khoản, Matk không nên thay đổi.
+            // Nếu Matk của dangnhap trùng với một entity đã có trong DB nhưng không được theo dõi bởi context này
+            // thì Attach và đặt trạng thái Modified.
+            _context.Dangnhaps.Update(dangnhap); // Attach entity và đặt trạng thái Modified
+            // Hoặc có thể dùng: _context.Entry(dangnhap).State = EntityState.Modified;
+        }
         _context.SaveChanges();
     }
 

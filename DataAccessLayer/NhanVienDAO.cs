@@ -22,9 +22,21 @@ public class NhanVienDAO
         _context.SaveChanges();
     }
 
-    public void Update(Nhanvien nv)
+    public void Update(Nhanvien nhanvien) // nhanvien ở đây là đối tượng mới từ UI (detached)
     {
-        _context.Nhanviens.Update(nv);
+        var existingNhanvien = _context.Nhanviens.Find(nhanvien.MaNv);
+        if (existingNhanvien != null)
+        {
+            _context.Entry(existingNhanvien).CurrentValues.SetValues(nhanvien);
+            // Quan trọng: Nếu Matk của Nhanvien có thể thay đổi để liên kết với một tài khoản khác,
+            // bạn cần gán thủ công Matk mới cho existingNhanvien.
+            // existingNhanvien.Matk = nhanvien.Matk; // Chỉ gán nếu Matk có thể thay đổi logic của bạn
+        }
+        else
+        {
+            _context.Nhanviens.Update(nhanvien);
+            // Hoặc: _context.Entry(nhanvien).State = EntityState.Modified;
+        }
         _context.SaveChanges();
     }
 
