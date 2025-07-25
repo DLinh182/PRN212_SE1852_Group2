@@ -4,7 +4,8 @@ public interface IDangNhapRepository {
     List<Dangnhap> GetAll();
     void Add(Dangnhap tk);
     void Update(Dangnhap tk);
-    void Delete(int id);
-    Dangnhap GetById(int id);
     bool KiemTraTaiKhoan(string taiKhoan, string matKhau);
+    Dangnhap GetById(string maTK);
+    void Delete(string maTK);
+    bool IsTaiKhoanExists(string taiKhoan);
 } 

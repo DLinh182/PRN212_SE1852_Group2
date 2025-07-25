@@ -1,4 +1,4 @@
-using BusinessObject;
+﻿using BusinessObject;
 using DataAccessLayer;
 
 public class CthdDAO
@@ -21,24 +21,48 @@ public class CthdDAO
         _context.SaveChanges();
     }
 
-    public void Update(Cthd ct)
+    public void Update(Cthd cthd)
     {
-        _context.Cthds.Update(ct);
-        _context.SaveChanges();
+        var existingCthd = _context.Cthds.Find(cthd.MaHd, cthd.MaSp, cthd.KichCo); // Giả sử khóa chính là MaHD, MaSP, KichCo
+        if (existingCthd != null)
+        {
+            _context.Entry(existingCthd).CurrentValues.SetValues(cthd);
+            _context.SaveChanges();
+        }
+        else
+        {
+            throw new Exception($"Chi tiết hóa đơn không tồn tại.");
+        }
     }
 
-    public void Delete(int id)
+    public void Delete(int maHD, string maSP, string kichCo)
     {
-        var ct = _context.Cthds.Find(id);
-        if (ct != null)
+        var cthd = _context.Cthds.Find(maHD, maSP, kichCo); // Giả sử khóa chính là MaHD, MaSP, KichCo
+        if (cthd != null)
         {
-            _context.Cthds.Remove(ct);
+            _context.Cthds.Remove(cthd);
+            _context.SaveChanges();
+        }
+        else
+        {
+            throw new Exception($"Chi tiết hóa đơn không tồn tại.");
+        }
+    }
+
+    public void DeleteByMaHD(int maHD)
+    {
+        var cthds = _context.Cthds.Where(ct => ct.MaHd == maHD).ToList();
+        if (cthds.Any())
+        {
+            _context.Cthds.RemoveRange(cthds);
             _context.SaveChanges();
         }
     }
 
-    public Cthd GetById(int id)
+    public List<Cthd> GetById(int MaHD)
     {
-        return _context.Cthds.Find(id);
+        return _context.Cthds.Where(ct => ct.MaHd == MaHD).ToList();
     }
+
+
 } 

@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -402,7 +402,8 @@ namespace QuanLyShopQuanAoWPF
             else
             {
                 MessageBox.Show("Vui lòng chọn một nhân viên để sửa.", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
+            }   
+
         }
 
         private void BtnXoa_Click(object sender, RoutedEventArgs e)

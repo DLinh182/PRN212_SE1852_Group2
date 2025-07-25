@@ -4,7 +4,8 @@ public interface IDangNhapService {
     List<Dangnhap> GetAll();
     void Add(Dangnhap tk);
     void Update(Dangnhap tk);
-    void Delete(int id);
-    Dangnhap GetById(int id);
+    void Delete(string maTK);
+    Dangnhap GetById(string id);
     bool KiemTraTaiKhoan(string taiKhoan, string matKhau);
+    bool IsTaiKhoanExists(string taiKhoan);
 } 

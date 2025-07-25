@@ -1,4 +1,4 @@
-using BusinessObject;
+﻿using BusinessObject;
 using DataAccessLayer;
 
 public class HoaDonDAO
@@ -21,20 +21,52 @@ public class HoaDonDAO
         _context.SaveChanges();
     }
 
-    public void Update(Hoadon hd)
+    public void Update(Hoadon hoaDon)
     {
-        _context.Hoadons.Update(hd);
-        _context.SaveChanges();
-    }
-
-    public void Delete(int id)
-    {
-        var hd = _context.Hoadons.Find(id);
-        if (hd != null)
+        var existingHoaDon = _context.Hoadons.Find(hoaDon.MaHd);
+        if (existingHoaDon != null)
         {
-            _context.Hoadons.Remove(hd);
+            _context.Entry(existingHoaDon).CurrentValues.SetValues(hoaDon);
             _context.SaveChanges();
         }
+        else
+        {
+            throw new Exception($"Hóa đơn với mã {hoaDon.MaHd} không tồn tại.");
+        }
+    }
+
+    public void Delete(int maHD)
+    {
+        var hoaDon = _context.Hoadons.Find(maHD);
+        if (hoaDon != null)
+        {
+            _context.Hoadons.Remove(hoaDon);
+            _context.SaveChanges();
+        }
+        else
+        {
+            throw new Exception($"Hóa đơn với mã {maHD} không tồn tại.");
+        }
+    }
+
+    public List<Hoadon> GetByTrangThai(string trangThai)
+    {
+        if (string.IsNullOrEmpty(trangThai) || trangThai == "Tất cả")
+        {
+            return _context.Hoadons.ToList();
+        }
+        return _context.Hoadons.Where(hd => hd.TrangThai == trangThai).ToList();
+    }
+
+    public decimal GetTotalTongThanhToan()
+    {
+        return _context.Hoadons.Sum(hd => (decimal?)hd.TongThanhToan) ?? 0;
+    }
+
+    public decimal GetTotalByPaymentMethod(string paymentMethod)
+    {
+        return _context.Hoadons.Where(hd => hd.HinhThucThanhToan == paymentMethod)
+                             .Sum(hd => (decimal?)hd.TongThanhToan) ?? 0;
     }
 
     public Hoadon GetById(int id)

@@ -11,7 +11,7 @@ public partial class Nhanvien
 
     public string? Sdtnv { get; set; }
 
-    public DateTime? NgaySinhNv { get; set; }
+    public DateOnly? NgaySinhNv { get; set; }
 
     public string? DiaChiNv { get; set; }
 

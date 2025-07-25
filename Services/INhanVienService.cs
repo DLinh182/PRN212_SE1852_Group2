@@ -8,4 +8,5 @@ public interface INhanVienService
     void Delete(string maNV);
     Nhanvien GetById(string maNV);
     List<Nhanvien> SearchByName(string tenNV);
-}
+} 
+
