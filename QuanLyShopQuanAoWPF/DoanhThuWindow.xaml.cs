@@ -14,6 +14,7 @@ namespace QuanLyShopQuanAoWPF
             InitializeComponent();
             btnXem.Click += BtnXem_Click;
             dgDoanhThu.SelectionChanged += dgDoanhThu_SelectionChanged;
+            btnSuaHoaDon.Click += BtnSuaHoaDon_Click;
         }
 
         private void BtnXem_Click(object sender, RoutedEventArgs e)
@@ -48,6 +49,22 @@ namespace QuanLyShopQuanAoWPF
             else
             {
                 dgChiTietHoaDon.ItemsSource = null;
+            }
+        }
+
+        private void BtnSuaHoaDon_Click(object sender, RoutedEventArgs e)
+        {
+            if (dgDoanhThu.SelectedItem is Hoadon hd)
+            {
+                var suaWindow = new SuaHoaDonWindow(hd);
+                if (suaWindow.ShowDialog() == true)
+                {
+                    BtnXem_Click(null, null); // Reload lại danh sách hóa đơn
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn hóa đơn cần sửa!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
     }

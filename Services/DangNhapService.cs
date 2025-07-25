@@ -1,6 +1,7 @@
 using BusinessObject;
 
-public class DangNhapService : IDangNhapService {
+public class DangNhapService : IDangNhapService 
+{
     private readonly IDangNhapRepository repo = new DangNhapRepository();
     public List<Dangnhap> GetAll() {
         return repo.GetAll();
@@ -11,8 +12,12 @@ public class DangNhapService : IDangNhapService {
     public void Update(Dangnhap tk) {
         repo.Update(tk);
     }
-    public void Delete(string maTK) => repo.Delete(maTK);
-    public Dangnhap GetById(string maTK) => repo.GetById(maTK);
+    public void Delete(string id) {
+        repo.Delete(id);
+    }
+    public Dangnhap GetById(string id) {
+        return repo.GetById(id);
+    }
     public bool KiemTraTaiKhoan(string taiKhoan, string matKhau) {
         return repo.KiemTraTaiKhoan(taiKhoan, matKhau);
     }

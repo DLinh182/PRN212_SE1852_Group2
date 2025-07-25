@@ -28,6 +28,7 @@ namespace QuanLyShopQuanAoWPF
             txtTienNhan.TextChanged += TinhTienThua;
             txtGiamGia.TextChanged += TinhTienThua;
             cbo_HTGiamGia.SelectionChanged += TinhTienThua;
+            btnTim.Click += BtnTim_Click; // Thêm dòng này để gán sự kiện tìm kiếm
         }
 
         private void BanHangWindow_Loaded(object sender, RoutedEventArgs e)
@@ -287,6 +288,47 @@ namespace QuanLyShopQuanAoWPF
                 tong += item.ThanhTien;
             }
             return tong;
+        }
+
+        private void BtnTim_Click(object sender, RoutedEventArgs e)
+        {
+            string keyword = txtTimKiem.Text.Trim().ToLower();
+            wpSanPham.Children.Clear();
+            var dsSanPham = sanPhamService.GetAll();
+            var filtered = string.IsNullOrEmpty(keyword)
+                ? dsSanPham
+                : dsSanPham.Where(sp => sp.TenSp != null && sp.TenSp.ToLower().Contains(keyword)).ToList();
+            foreach (var sp in filtered)
+            {
+                var stack = new StackPanel { Orientation = Orientation.Vertical, Margin = new Thickness(5) };
+                var ten = new TextBlock
+                {
+                    Text = sp.TenSp,
+                    TextWrapping = TextWrapping.Wrap,
+                    FontWeight = FontWeights.Bold,
+                    TextAlignment = TextAlignment.Center,
+                    FontSize = 15,
+                    Margin = new Thickness(0, 0, 0, 5)
+                };
+                stack.Children.Add(ten);
+                var gia = new TextBlock
+                {
+                    Text = "Giá: " + (sp.GiaBan?.ToString("N0") ?? "0"),
+                    Foreground = System.Windows.Media.Brushes.Red,
+                    TextAlignment = TextAlignment.Center,
+                    FontSize = 14
+                };
+                stack.Children.Add(gia);
+                var btn = new Button
+                {
+                    Content = stack,
+                    Tag = sp,
+                    Width = 170,
+                    Margin = new Thickness(10),
+                };
+                btn.Click += (s, args) => { MoThongTinSanPham(sp); };
+                wpSanPham.Children.Add(btn);
+            }
         }
     }
 

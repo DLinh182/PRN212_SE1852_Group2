@@ -328,24 +328,24 @@ namespace QuanLyShopQuanAoWPF
         }
 
         private void BtnSua_Click(object sender, RoutedEventArgs e)
-        {
-            if (_selectedNhanvien == null)
-            {
-                MessageBox.Show("Vui lòng chọn một nhân viên để sửa.", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+{
+    if (_selectedNhanvien == null)
+    {
+        MessageBox.Show("Vui lòng chọn một nhân viên để sửa.", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+        return;
+    }
 
-            SetInputEnabled(true);
-            txtMaNV.IsReadOnly = true; // Không cho phép sửa mã NV
-            txtMaTK.IsReadOnly = true; // Không cho phép sửa mã TK khi sửa NV để tránh phức tạp
+    SetInputEnabled(true);
+    txtMaNV.IsReadOnly = true; // Không cho phép sửa mã NV
+    txtMaTK.IsReadOnly = true; // Không cho phép sửa mã TK khi sửa NV để tránh phức tạp
 
-            btnLuu.IsEnabled = true;
+    btnLuu.IsEnabled = true;
 
-            _isAddingNhanvien = false;
-            _isUpdatingNhanvien = true;
+    _isAddingNhanvien = false;
+    _isUpdatingNhanvien = true;
 
-            MessageBox.Show("Bạn có thể chỉnh sửa thông tin nhân viên và tài khoản đã chọn.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
+    MessageBox.Show("Bạn có thể chỉnh sửa thông tin nhân viên và tài khoản đã chọn.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+}
 
         private void BtnXoa_Click(object sender, RoutedEventArgs e)
         {

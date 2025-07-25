@@ -7,9 +7,12 @@ namespace QuanLyShopQuanAoWPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private string _role;
+        public MainWindow(string role = "user")
         {
             InitializeComponent();
+            _role = role;
+            ucMenu.SetRole(_role);
         }
 
         private void BtnQuanLySanPham_Click(object sender, RoutedEventArgs e)
