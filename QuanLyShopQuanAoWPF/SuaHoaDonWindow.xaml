@@ -1,0 +1,16 @@
+<Window x:Class="QuanLyShopQuanAoWPF.SuaHoaDonWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Sửa hóa đơn" Height="350" Width="400" WindowStartupLocation="CenterScreen">
+    <StackPanel Margin="20">
+        <TextBlock Text="Mã hóa đơn:"/>
+        <TextBox Text="{Binding MaHd}" IsReadOnly="True" Margin="0,0,0,10"/>
+        <TextBlock Text="Trạng thái:"/>
+        <TextBox Text="{Binding TrangThai}" Margin="0,0,0,10"/>
+        <TextBlock Text="Hình thức thanh toán:"/>
+        <TextBox Text="{Binding HinhThucThanhToan}" Margin="0,0,0,10"/>
+        <TextBlock Text="Ghi chú:"/>
+        <TextBox Text="{Binding GhiChu}" Margin="0,0,0,10"/>
+        <Button Content="Lưu" Width="100" HorizontalAlignment="Right" Click="BtnLuu_Click"/>
+    </StackPanel>
+</Window> 

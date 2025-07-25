@@ -38,7 +38,6 @@ namespace QuanLyShopQuanAoWPF
             // Vô hiệu hóa các trường nhập liệu sản phẩm ban đầu
             SetSanPhamInputEnabled(false);
             btnLuu.IsEnabled = false; // Nút lưu sản phẩm
-            btnLuuDM.IsEnabled = false; // Nút lưu danh mục
 
             // Điền dữ liệu cho ComboBox Giới tính
             cboGioiTinh.ItemsSource = new List<string> { "Nam", "Nữ", "Unisex" };
@@ -59,9 +58,7 @@ namespace QuanLyShopQuanAoWPF
 
             // Các nút Danh mục
             btnTaoDM.Click += BtnTaoDM_Click;
-            btnSuaDM.Click += BtnSuaDM_Click;
             btnXoaDM.Click += BtnXoaDM_Click;
-            btnLuuDM.Click += BtnLuuDM_Click;
         }
 
         private void LoadData()
@@ -138,9 +135,8 @@ namespace QuanLyShopQuanAoWPF
             bool isLoaiSpSelected = (_selectedLoaiSp != null);
 
             btnTaoDM.IsEnabled = true; // Luôn có thể tạo danh mục
-            btnSuaDM.IsEnabled = isLoaiSpSelected && !_isAddingLoaiSp;
             btnXoaDM.IsEnabled = isLoaiSpSelected && !_isAddingLoaiSp;
-            btnLuuDM.IsEnabled = _isAddingLoaiSp || _isUpdatingLoaiSp; // Bật khi đang thêm hoặc sửa danh mục
+
 
             // Vô hiệu hóa DataGrid khi đang thêm/sửa danh mục
             dgDanhMuc.IsEnabled = !(_isAddingLoaiSp || _isUpdatingLoaiSp);
@@ -492,43 +488,10 @@ namespace QuanLyShopQuanAoWPF
         // --- Sự kiện của các nút Danh mục ---
         private void BtnTaoDM_Click(object sender, RoutedEventArgs e)
         {
-            // Reset các trường sản phẩm nếu đang ở chế độ chỉnh sửa sản phẩm
-            _isAddingSanPham = false;
-            _isUpdatingSanPham = false;
-            SetSanPhamInputEnabled(false);
-            ClearSanPhamInputs();
-            _selectedSanPham = null;
-            UpdateSanPhamButtonStates();
-
-            // Chuyển sang chế độ thêm danh mục
-            _isAddingLoaiSp = true;
-            _isUpdatingLoaiSp = false;
-            dgDanhMuc.SelectedItem = null; // Bỏ chọn danh mục hiện có
-            UpdateLoaiSpButtonStates();
-            MessageBox.Show("Bắt đầu tạo danh mục. Vui lòng chọn dòng mới trong bảng Danh mục, nhập tên và nhấn Lưu.", "Hướng dẫn", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
-        private void BtnSuaDM_Click(object sender, RoutedEventArgs e)
-        {
-            if (_selectedLoaiSp != null)
+            var taoDMWindow = new TaoDanhMucWindow();
+            if (taoDMWindow.ShowDialog() == true)
             {
-                // Reset các trường sản phẩm nếu đang ở chế độ chỉnh sửa sản phẩm
-                _isAddingSanPham = false;
-                _isUpdatingSanPham = false;
-                SetSanPhamInputEnabled(false);
-                ClearSanPhamInputs();
-                _selectedSanPham = null;
-                UpdateSanPhamButtonStates();
-
-                // Chuyển sang chế độ sửa danh mục
-                _isAddingLoaiSp = false;
-                _isUpdatingLoaiSp = true;
-                UpdateLoaiSpButtonStates();
-                MessageBox.Show($"Bắt đầu sửa danh mục '{_selectedLoaiSp.TenL}'. Vui lòng chỉnh sửa trực tiếp trên bảng và nhấn Lưu.", "Hướng dẫn", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
-            {
-                MessageBox.Show("Vui lòng chọn một danh mục để sửa.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                LoadLoaiSps(); // Sau khi tạo xong, reload lại danh mục
             }
         }
 
@@ -564,50 +527,6 @@ namespace QuanLyShopQuanAoWPF
             else
             {
                 MessageBox.Show("Vui lòng chọn một danh mục để xóa.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-        }
-
-        private void BtnLuuDM_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (_isAddingLoaiSp)
-                {
-                    // Khi tạo danh mục, người dùng sẽ nhập trực tiếp trên DataGrid
-                    // hoặc bạn cần một popup để nhập liệu
-                    // Giả định bạn sẽ nhập trực tiếp trên dòng mới của DataGrid
-                    // Hoặc bạn sẽ có một TextBox riêng cho MaLSP và TenL
-
-                    // Cách đơn giản nhất cho thêm/sửa danh mục là cho phép sửa trực tiếp trên dgDanhMuc
-                    // và xử lý sự kiện CellEditEnding của DataGrid.
-                    MessageBox.Show("Để lưu danh mục, vui lòng chỉnh sửa hoặc nhập dữ liệu trực tiếp trên bảng Danh mục và nhấn Enter hoặc Tab ra ngoài để kích hoạt lưu.", "Hướng dẫn");
-
-                    // Để đơn giản, tôi sẽ không triển khai logic nhập liệu trực tiếp ở đây.
-                    // Bạn sẽ cần một popup hoặc các TextBox riêng cho danh mục nếu không muốn sửa trực tiếp.
-                    // Nếu muốn sửa trực tiếp, bạn cần sử dụng sự kiện CellEditEnding hoặc RowEditEnding của DataGrid.
-
-                    // Giả sử có một Loaisp mới được tạo
-                    // Loaisp newLoaiSp = new Loaisp { MaLSP = "ML00X", TenL = "Tên danh mục mới" };
-                    // _loaiSpService.Add(newLoaiSp);
-                    // MessageBox.Show("Thêm danh mục thành công!", "Thông báo");
-
-                }
-                else if (_isUpdatingLoaiSp)
-                {
-                    // Logic tương tự như thêm, cần sự kiện DataGrid để lấy dữ liệu đã chỉnh sửa
-                    MessageBox.Show("Để lưu danh mục đã sửa, vui lòng chỉnh sửa trực tiếp trên bảng Danh mục và nhấn Enter hoặc Tab ra ngoài để kích hoạt lưu.", "Hướng dẫn");
-                    // _loaiSpService.Update(_selectedLoaiSp); // _selectedLoaiSp đã được cập nhật qua binding nếu DataGrid cho phép sửa trực tiếp
-                    // MessageBox.Show("Cập nhật danh mục thành công!", "Thông báo");
-                }
-
-                _isAddingLoaiSp = false;
-                _isUpdatingLoaiSp = false;
-                LoadLoaiSps();
-                UpdateLoaiSpButtonStates();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi lưu danh mục: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

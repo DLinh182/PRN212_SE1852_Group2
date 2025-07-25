@@ -5,7 +5,6 @@
         WindowState="Maximized"
         Title="Quản Lý Sản Phẩm" Height="700" Width="1300" WindowStartupLocation="CenterScreen">
     <DockPanel>
-        <local:UcMenuChucNang DockPanel.Dock="Top"/>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -97,8 +96,6 @@
                     <Button x:Name="btnReset" Content="Reset công cụ" Grid.Row="2" Grid.Column="0" Margin="10,5"/>
                     <Button x:Name="btnTaoDM" Content="Tạo danh mục" Grid.Row="2" Grid.Column="1" Margin="10,5"/>
                     <Button x:Name="btnXoaDM" Content="Xoá danh mục" Grid.Row="3" Grid.Column="0" Margin="10,5"/>
-                    <Button x:Name="btnSuaDM" Content="Sửa danh mục" Grid.Row="3" Grid.Column="1" Margin="10,5"/>
-                    <Button x:Name="btnLuuDM" Content="Lưu danh mục" Grid.Row="4" Grid.Column="0" Margin="10,5" IsEnabled="False"/>
                 </Grid>
             </Grid>
             <!-- GroupBox tìm kiếm -->

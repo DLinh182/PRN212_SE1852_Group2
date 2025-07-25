@@ -5,9 +5,10 @@ namespace QuanLyShopQuanAoWPF
 {
     public partial class UcMenuChucNang : UserControl
     {
-        public UcMenuChucNang()
+        public UcMenuChucNang() // Constructor mặc định để XAML khởi tạo
         {
             InitializeComponent();
+            // Gán sự kiện ở đây nếu cần
             mnuTrangChu.Click += MnuTrangChu_Click;
             mnuBanHang.Click += MnuBanHang_Click;
             mnuSanPham.Click += MnuSanPham_Click;
@@ -15,6 +16,15 @@ namespace QuanLyShopQuanAoWPF
             mnuKhachHang.Click += MnuKhachHang_Click;
             mnuDoanhThu.Click += MnuDoanhThu_Click;
             mnuThoat.Click += MnuThoat_Click;
+        }
+
+        private string _role;
+        public void SetRole(string role)
+        {
+            if (role == "user")
+                mnuNhanVien.Visibility = Visibility.Collapsed;
+            else
+                mnuNhanVien.Visibility = Visibility.Visible;
         }
 
         private void MnuTrangChu_Click(object sender, RoutedEventArgs e)

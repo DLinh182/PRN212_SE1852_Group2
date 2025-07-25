@@ -11,13 +11,14 @@ public class DangNhapRepository : IDangNhapRepository {
     public void Update(Dangnhap tk) {
         dao.Update(tk);
     }
-    public void Delete(int id) {
+    public void Delete(string id) {
         dao.Delete(id);
     }
-    public Dangnhap GetById(int id) {
+    public Dangnhap GetById(string id) {
         return dao.GetById(id);
     }
     public bool KiemTraTaiKhoan(string taiKhoan, string matKhau) {
         return dao.KiemTraTaiKhoan(taiKhoan, matKhau);
     }
+    public bool IsTaiKhoanExists(string taiKhoan) => dao.IsTaiKhoanExists(taiKhoan);
 } 

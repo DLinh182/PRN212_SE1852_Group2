@@ -202,7 +202,7 @@ namespace QuanLyShopQuanAoWPF
             nv.Matk = cboMaTK.SelectedValue?.ToString(); // Lấy MATK từ ComboBox
 
             // Validate và Parse Ngày sinh
-            if (DateTime.TryParseExact(txtNgaySinh.Text, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime ngaySinh))
+            if (DateOnly.TryParseExact(txtNgaySinh.Text, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateOnly ngaySinh))
             {
                 nv.NgaySinhNv = ngaySinh;
                 // ... (your existing successful code)
@@ -402,7 +402,7 @@ namespace QuanLyShopQuanAoWPF
             else
             {
                 MessageBox.Show("Vui lòng chọn một nhân viên để sửa.", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }   
+            }
 
         }
 

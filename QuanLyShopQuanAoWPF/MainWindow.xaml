@@ -2,10 +2,10 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:QuanLyShopQuanAoWPF"
-        Title="Trang Chủ" Height="1050" Width="978" WindowStartupLocation="CenterScreen" WindowStyle="None">
+        Title="Trang Chủ" Height="510" Width="978" WindowStartupLocation="CenterScreen" WindowStyle="None">
     <DockPanel>
-        <local:UcMenuChucNang DockPanel.Dock="Top"/>
-        <Grid>
+        <local:UcMenuChucNang x:Name="ucMenu" DockPanel.Dock="Top"/>
+        <Grid Height="496">
             <Grid.RowDefinitions>
                 <RowDefinition Height="500"/>
                 <RowDefinition Height="50"/>

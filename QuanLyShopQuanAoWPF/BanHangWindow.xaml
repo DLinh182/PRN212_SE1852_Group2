@@ -1,7 +1,6 @@
 <Window x:Class="QuanLyShopQuanAoWPF.BanHangWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        WindowState="Maximized"
         Title="Bán hàng" Height="846" Width="1343" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.ColumnDefinitions>

@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Linq; // Added for FirstOrDefault
 
 namespace QuanLyShopQuanAoWPF
 {
@@ -27,8 +28,10 @@ namespace QuanLyShopQuanAoWPF
             bool hopLe = _dangNhapService.KiemTraTaiKhoan(taiKhoan, matKhau);
             if (hopLe)
             {
+                var dangNhap = _dangNhapService.GetAll().FirstOrDefault(x => x.Taikhoan == taiKhoan);
+                string role = dangNhap?.Loaitk ?? "user";
                 MessageBox.Show("Đăng nhập thành công!");
-                var main = new MainWindow();
+                var main = new MainWindow(role); // Truyền quyền sang MainWindow
                 main.Show();
                 this.Close();
             }

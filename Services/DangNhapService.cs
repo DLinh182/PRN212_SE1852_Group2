@@ -12,13 +12,14 @@ public class DangNhapService : IDangNhapService
     public void Update(Dangnhap tk) {
         repo.Update(tk);
     }
-    public void Delete(int id) {
+    public void Delete(string id) {
         repo.Delete(id);
     }
-    public Dangnhap GetById(int id) {
+    public Dangnhap GetById(string id) {
         return repo.GetById(id);
     }
     public bool KiemTraTaiKhoan(string taiKhoan, string matKhau) {
         return repo.KiemTraTaiKhoan(taiKhoan, matKhau);
     }
+    public bool IsTaiKhoanExists(string taiKhoan) => repo.IsTaiKhoanExists(taiKhoan);
 } 

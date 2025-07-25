@@ -30,7 +30,7 @@ public class DangNhapDAO
         _context.SaveChanges();
     }
 
-    public void Delete(int maTK)
+    public void Delete(string maTK)
     {
         var dangnhap = _context.Dangnhaps.FirstOrDefault(tk => tk.Matk == maTK);
         if (dangnhap != null)
@@ -50,7 +50,7 @@ public class DangNhapDAO
         }
     }
 
-    public Dangnhap GetById(int id)
+    public Dangnhap GetById(string maTK)
     {
         return _context.Dangnhaps.FirstOrDefault(tk => tk.Matk == maTK);
     }
@@ -58,5 +58,11 @@ public class DangNhapDAO
     public bool KiemTraTaiKhoan(string taiKhoan, string matKhau)
     {
         return _context.Dangnhaps.Any(x => x.Taikhoan == taiKhoan && x.Matkhau == matKhau);
+    }
+
+    // Phương thức kiểm tra tài khoản đã tồn tại chưa
+    public bool IsTaiKhoanExists(string taiKhoan)
+    {
+        return _context.Dangnhaps.Any(tk => tk.Taikhoan == taiKhoan);
     }
 } 
