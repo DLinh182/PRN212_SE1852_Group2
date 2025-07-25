@@ -9,7 +9,6 @@
             <MenuItem x:Name="mnuSanPham" Header="Sản Phẩm"/>
             <MenuItem x:Name="mnuNhanVien" Header="Nhân Viên"/>
             <MenuItem x:Name="mnuKhachHang" Header="Khách Hàng"/>
-            <MenuItem x:Name="mnuNhapKho" Header="Nhập Kho"/>
         </MenuItem>
         <MenuItem x:Name="mnuDoanhThu" Header="Doanh Thu"/>
         <MenuItem x:Name="mnuThoat" Header="Thoát"/>

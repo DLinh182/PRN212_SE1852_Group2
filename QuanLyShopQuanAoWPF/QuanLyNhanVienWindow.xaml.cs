@@ -403,6 +403,7 @@ namespace QuanLyShopQuanAoWPF
             {
                 MessageBox.Show("Vui lòng chọn một nhân viên để sửa.", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
             }   
+
         }
 
         private void BtnXoa_Click(object sender, RoutedEventArgs e)
@@ -581,4 +582,4 @@ namespace QuanLyShopQuanAoWPF
 
 
     }
-} 
+}
