@@ -20,7 +20,6 @@
                 <PasswordBox x:Name="txtMK" Width="298"/>
             </StackPanel>
             <Button x:Name="btnDN" Content="Đăng nhập" Width="160" Height="33" Background="#404040" Foreground="White" FontSize="16" Margin="0,0,0,10" Click="btnDN_Click"/>
-            <Button x:Name="button1" Content="Quên mật khẩu" Width="129" Height="32" Margin="210,0,0,0"/>
         </StackPanel>
         <!-- Đăng ký -->
     </Grid>

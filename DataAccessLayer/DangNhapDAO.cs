@@ -30,7 +30,7 @@ public class DangNhapDAO
         _context.SaveChanges();
     }
 
-    public void Delete(int id)
+    public void Delete(int maTK)
     {
         var dangnhap = _context.Dangnhaps.FirstOrDefault(tk => tk.Matk == maTK);
         if (dangnhap != null)
