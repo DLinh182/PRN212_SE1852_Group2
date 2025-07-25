@@ -2,27 +2,24 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         WindowState="Maximized"
-        Title="Bán hàng" Height="900" Width="1700" WindowStartupLocation="CenterScreen">
+        Title="Bán hàng" Height="846" Width="1343" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="700"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="624"/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <!-- PHẦN TRÁI: Thông tin khách hàng, bộ lọc, danh sách sản phẩm -->
         <StackPanel Grid.Column="0" Background="#FFF8F8F8">
-            <!-- Tiêu đề -->
-            <TextBlock Text="Bộ Lọc" FontSize="18" FontWeight="Bold" Margin="0,10,0,0" HorizontalAlignment="Center"/>
+
             <!-- Bộ lọc -->
             <StackPanel Orientation="Horizontal" Margin="10">
                 <TextBlock Text="Tên quần áo:" VerticalAlignment="Center" Margin="0,0,10,0"/>
                 <TextBox x:Name="txtTimKiem" Width="200" Height="30" Margin="0,0,10,0"/>
                 <Button x:Name="btnTim" Content="Tìm" Width="45" Height="30"/>
-                <ComboBox x:Name="cbo_DM" Width="150" Height="30" Margin="10,0,0,0"/>
-                <ComboBox x:Name="cbo_GiaTien" Width="150" Height="30" Margin="10,0,0,0"/>
             </StackPanel>
             <!-- Tiêu đề danh sách sản phẩm -->
             <TextBlock Text="Danh sách sản phẩm" FontSize="18" FontWeight="Bold" Margin="0,10,0,0" HorizontalAlignment="Center"/>
-            <!-- Danh sách sản phẩm (WrapPanel) -->
+            <!-- Danh sách sản phẩm  -->
             <ScrollViewer Height="600">
                 <WrapPanel x:Name="wpSanPham" Margin="10"/>
             </ScrollViewer>
@@ -30,13 +27,17 @@
             <TextBlock Text="Thông tin khách hàng" FontSize="18" FontWeight="Bold" Margin="0,10,0,0" HorizontalAlignment="Center"/>
             <StackPanel Orientation="Horizontal" Margin="10">
                 <TextBlock Text="Họ tên:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                <TextBox x:Name="txtTenKH" Width="200" Height="30" Margin="0,0,10,0"/>
+                <ComboBox x:Name="cboKhachHang" Width="200" Height="30" Margin="0,0,10,0"
+                          IsEditable="True"
+                          DisplayMemberPath="TenKh"
+                          SelectedValuePath="MaKh"
+                          SelectionChanged="cboKhachHang_SelectionChanged"/>
                 <TextBlock Text="SĐT:" VerticalAlignment="Center" Margin="0,0,10,0"/>
                 <TextBox x:Name="txtSDTKH" Width="150" Height="30"/>
             </StackPanel>
         </StackPanel>
         <!-- PHẦN PHẢI: Giỏ hàng, thanh toán -->
-        <StackPanel Grid.Column="1" Margin="10">
+        <StackPanel Grid.Column="1" Margin="10,10,10,10">
             <!-- Tiêu đề -->
             <TextBlock Text="Giỏ hàng" FontSize="18" FontWeight="Bold" Margin="0,0,0,10" HorizontalAlignment="Center"/>
             <!-- DataGrid giỏ hàng -->
@@ -48,6 +49,13 @@
                     <DataGridTextColumn Header="Số lượng" Binding="{Binding SoLuong}" Width="*"/>
                     <DataGridTextColumn Header="Đơn giá" Binding="{Binding GiaBan}" Width="*"/>
                     <DataGridTextColumn Header="Thành tiền" Binding="{Binding ThanhTien}" Width="*"/>
+                    <DataGridTemplateColumn Header="Xóa" Width="60">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Xóa" Click="BtnXoaKhoiGio_Click" Tag="{Binding}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
             <!-- Tổng tiền, giảm giá, nhân viên, hình thức thanh toán, ghi chú, trạng thái, thanh toán -->
@@ -74,7 +82,12 @@
                 <CheckBox x:Name="chk_ChuaThanhToan" Content="Chưa thanh toán" Margin="0,0,10,0"/>
                 <CheckBox x:Name="chk_DatCoc" Content="Đặt cọc"/>
             </StackPanel>
-            <Button x:Name="btnThanhToan" Content="THANH TOÁN" Height="60" Background="Tomato" Foreground="White" FontSize="18"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button x:Name="btnLamMoi" Content="Làm mới" Height="36" Width="120" Background="Gray" Foreground="White" FontSize="16" Margin="0,0,10,0" Click="BtnLamMoi_Click"/>
+                <Button x:Name="btnThanhToan" Content="THANH TOÁN" Height="36" Width="180" Background="Tomato" Foreground="White" FontSize="18" Click="BtnThanhToan_Click"/>
+            </StackPanel>
+            <TextBlock x:Name="tbThongBao" Foreground="Red" FontWeight="Bold" FontSize="16" Margin="0,10,0,0" TextWrapping="Wrap"/>
+            <TextBlock x:Name="tbThongBaoThanhCong" Foreground="Green" FontWeight="Bold" FontSize="16" Margin="0,10,0,0" TextAlignment="Center" Visibility="Collapsed"/>
         </StackPanel>
     </Grid>
 </Window>
