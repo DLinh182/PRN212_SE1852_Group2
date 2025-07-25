@@ -1,4 +1,4 @@
-using BusinessObject;
+﻿using BusinessObject;
 using DataAccessLayer;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +29,7 @@ public class DangNhapDAO
         _context.SaveChanges();
     }
 
-    public void Delete(int id)
+    public void Delete(string id)
     {
         var tk = _context.Dangnhaps.Find(id);
         if (tk != null)
@@ -39,7 +39,7 @@ public class DangNhapDAO
         }
     }
 
-    public Dangnhap GetById(int id)
+    public Dangnhap GetById(string id)
     {
         return _context.Dangnhaps.Find(id);
     }
@@ -48,4 +48,10 @@ public class DangNhapDAO
     {
         return _context.Dangnhaps.Any(x => x.Taikhoan == taiKhoan && x.Matkhau == matKhau);
     }
-} 
+
+    // Kiểm tra trùng tên tài khoản (username)
+    public bool IsTaiKhoanExists(string taiKhoan)
+    {
+        return _context.Dangnhaps.Any(x => x.Taikhoan == taiKhoan);
+    }
+}

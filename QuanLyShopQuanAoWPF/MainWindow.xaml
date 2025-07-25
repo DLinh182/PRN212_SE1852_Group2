@@ -2,22 +2,18 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:QuanLyShopQuanAoWPF"
-        Title="Trang Chủ" Height="1050" Width="978" WindowStartupLocation="CenterScreen" WindowStyle="None">
+        Title="Trang Chủ" Height="515" Width="978" WindowStartupLocation="CenterScreen" WindowStyle="None">
     <DockPanel>
         <local:UcMenuChucNang DockPanel.Dock="Top"/>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="500"/>
                 <RowDefinition Height="50"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="500"/>
+
             </Grid.RowDefinitions>
             <!-- Banner trên -->
-            <Image x:Name="imgBanner" Grid.Row="0" Stretch="Fill" Source="D:\group_project\QuanLyShopQuanAoWPF\image\Banner_TrangChu1.png"/>
-            <!-- Panel trống ở giữa (panel1) -->
-            <Grid x:Name="panel1" Grid.Row="2" Background="White"/>
-            <!-- Banner dưới -->
-            <Image x:Name="imgFooter" Grid.Row="3" Stretch="Fill" Source="D:\group_project\QuanLyShopQuanAoWPF\image\Banner_TrangChu2.png"/>
+            <Image x:Name="imgBanner" Source="D:\group_project\QuanLyShopQuanAoWPF\image\Banner_TrangChu2.png" Grid.Row="0" Stretch="Fill"/>
+            
         </Grid>
     </DockPanel>
 </Window>

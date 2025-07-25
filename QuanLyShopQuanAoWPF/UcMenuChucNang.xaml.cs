@@ -10,7 +10,6 @@ namespace QuanLyShopQuanAoWPF
             InitializeComponent();
             mnuTrangChu.Click += MnuTrangChu_Click;
             mnuBanHang.Click += MnuBanHang_Click;
-            mnuHoaDon.Click += MnuHoaDon_Click;
             mnuSanPham.Click += MnuSanPham_Click;
             mnuNhanVien.Click += MnuNhanVien_Click;
             mnuKhachHang.Click += MnuKhachHang_Click;
@@ -27,12 +26,6 @@ namespace QuanLyShopQuanAoWPF
         private void MnuBanHang_Click(object sender, RoutedEventArgs e)
         {
             var win = new BanHangWindow();
-            win.Show();
-        }
-
-        private void MnuHoaDon_Click(object sender, RoutedEventArgs e)
-        {
-            var win = new QuanLyHoaDonWindow();
             win.Show();
         }
 

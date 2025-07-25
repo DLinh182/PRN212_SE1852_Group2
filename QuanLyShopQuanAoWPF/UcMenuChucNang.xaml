@@ -5,7 +5,6 @@
         <MenuItem x:Name="mnuTrangChu" Header="Trang Chủ"/>
         <MenuItem x:Name="mnuBanHang" Header="Bán Hàng"/>
         <MenuItem x:Name="mnuQuanLy" Header="Quản Lý">
-            <MenuItem x:Name="mnuHoaDon" Header="Hoá Đơn"/>
             <MenuItem x:Name="mnuSanPham" Header="Sản Phẩm"/>
             <MenuItem x:Name="mnuNhanVien" Header="Nhân Viên"/>
             <MenuItem x:Name="mnuKhachHang" Header="Khách Hàng"/>

@@ -202,7 +202,7 @@ namespace QuanLyShopQuanAoWPF
             nv.Matk = cboMaTK.SelectedValue?.ToString(); // Lấy MATK từ ComboBox
 
             // Validate và Parse Ngày sinh
-            if (DateOnly.TryParseExact(txtNgaySinh.Text, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateOnly ngaySinh))
+            if (DateTime.TryParseExact(txtNgaySinh.Text, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime ngaySinh))
             {
                 nv.NgaySinhNv = ngaySinh;
                 // ... (your existing successful code)
