@@ -123,7 +123,6 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Mã Sản Phẩm" Binding="{Binding MaSp}"/>
                         <DataGridTextColumn Header="Tên Sản Phẩm" Binding="{Binding TenSp}"/>
-                        <DataGridTextColumn Header="Hình" Binding="{Binding HinhSp}"/>
                         <DataGridTextColumn Header="Giá Bán" Binding="{Binding GiaBan}"/>
                         <DataGridTextColumn Header="Giới Tính" Binding="{Binding GioiTinh}"/>
                         <DataGridTextColumn Header="Thông Tin" Binding="{Binding ThongTinSp}"/>

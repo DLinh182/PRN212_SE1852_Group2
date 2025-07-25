@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Quản Lý Khách Hàng" Height="950" Width="1500" WindowStartupLocation="CenterScreen" >
     <DockPanel>
-        
+
         <!-- Phần còn lại giữ nguyên -->
         <Grid>
             <Grid.ColumnDefinitions>
@@ -41,7 +41,7 @@
                     <TextBox x:Name="txtNamSinh" Grid.Row="0" Grid.Column="3" Height="28"/>
                     <!-- Dòng 2 -->
                     <TextBlock Text="Giới tính:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
-                    <ComboBox x:Name="cboGioiTinh" Grid.Row="1" Grid.Column="1" Height="28" Width="120" Margin="0,6,192,6"/>
+                    <ComboBox x:Name="cboGioiTinh" Grid.Row="1" Grid.Column="1" Height="28" Margin="88,6,313,6"/>
                     <TextBlock Text="Số điện thoại:" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
                     <TextBox x:Name="txtSDT" Grid.Row="1" Grid.Column="3" Height="28"/>
                     <!-- Dòng 3 -->
