@@ -1,4 +1,4 @@
-using BusinessObject;
+﻿using BusinessObject;
 using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 
@@ -56,4 +56,6 @@ public class NhanVienDAO
                        .Where(nv => nv.TenNv.Contains(tenNV))
                        .ToList();
     }
+
+
 }

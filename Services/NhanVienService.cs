@@ -18,4 +18,5 @@ public class NhanVienService : INhanVienService
     public void Delete(string maNV) => repo.Delete(maNV);
     public Nhanvien GetById(string maNV) => repo.GetById(maNV);
     public List<Nhanvien> SearchByName(string tenNV) => repo.SearchByName(tenNV);
-}
+} 
+

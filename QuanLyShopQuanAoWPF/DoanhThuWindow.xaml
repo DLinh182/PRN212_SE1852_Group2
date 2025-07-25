@@ -1,6 +1,7 @@
 <Window x:Class="QuanLyShopQuanAoWPF.DoanhThuWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowState="Maximized"
         Title="Doanh Thu" Height="750" Width="1108" WindowStartupLocation="CenterScreen">
     <Grid Margin="20">
         <!-- Tiêu đề -->

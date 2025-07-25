@@ -5,5 +5,5 @@ public interface ICthdService {
     void Add(Cthd ct);
     void Update(Cthd ct);
     void Delete(int id);
-    Cthd GetById(int id);
+    List<Cthd> GetById(int id);
 } 

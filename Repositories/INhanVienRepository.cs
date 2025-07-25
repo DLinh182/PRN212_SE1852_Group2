@@ -1,5 +1,6 @@
 using BusinessObject;
 
+
 public interface INhanVienRepository
 {
     List<Nhanvien> GetAll();
@@ -8,4 +9,5 @@ public interface INhanVienRepository
     void Update(Nhanvien nhanvien);
     void Delete(string maNV);
     List<Nhanvien> SearchByName(string tenNV);
-}
+} 
+

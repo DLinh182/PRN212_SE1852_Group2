@@ -18,4 +18,5 @@ public class NhanVienRepository : INhanVienRepository
     public void Delete(string maNV) => dao.Delete(maNV);
     public Nhanvien GetById(string maNV) => dao.GetById(maNV);
     public List<Nhanvien> SearchByName(string tenNV) => dao.SearchByName(tenNV);
-}
+} 
+

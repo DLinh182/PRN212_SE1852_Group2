@@ -1,6 +1,7 @@
 using BusinessObject;
 
-public class CthdService : ICthdService {
+public class CthdService : ICthdService 
+{
     private readonly ICthdRepository repo = new CthdRepository();
     public List<Cthd> GetAll() {
         return repo.GetAll();
@@ -12,9 +13,9 @@ public class CthdService : ICthdService {
         repo.Update(ct);
     }
     public void Delete(int id) {
-        repo.Delete(id);
+        repo.DeleteByMaHD(id);
     }
-    public Cthd GetById(int id) {
+    public List<Cthd> GetById(int id) {
         return repo.GetById(id);
     }
 } 

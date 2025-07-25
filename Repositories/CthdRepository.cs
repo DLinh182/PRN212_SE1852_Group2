@@ -1,6 +1,7 @@
 using BusinessObject;
 
-public class CthdRepository : ICthdRepository {
+public class CthdRepository : ICthdRepository
+{
     private readonly CthdDAO dao = new CthdDAO();
     public List<Cthd> GetAll() {
         return dao.GetAll();
@@ -11,10 +12,17 @@ public class CthdRepository : ICthdRepository {
     public void Update(Cthd ct) {
         dao.Update(ct);
     }
-    public void Delete(int id) {
-        dao.Delete(id);
-    }
-    public Cthd GetById(int id) {
+    public List<Cthd> GetById(int id) {
         return dao.GetById(id);
+    }
+
+    public void Delete(int maHD, string maSP, string kichCo)
+    {
+        dao.Delete(maHD, maSP, kichCo);
+    }
+
+    public void DeleteByMaHD(int maHD)
+    {
+        dao.DeleteByMaHD(maHD);
     }
 } 
