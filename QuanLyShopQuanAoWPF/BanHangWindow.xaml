@@ -18,7 +18,7 @@
             </StackPanel>
             <!-- Tiêu đề danh sách sản phẩm -->
             <TextBlock Text="Danh sách sản phẩm" FontSize="18" FontWeight="Bold" Margin="0,10,0,0" HorizontalAlignment="Center"/>
-            <!-- Danh sách sản phẩm (WrapPanel) -->
+            <!-- Danh sách sản phẩm  -->
             <ScrollViewer Height="600">
                 <WrapPanel x:Name="wpSanPham" Margin="10"/>
             </ScrollViewer>
