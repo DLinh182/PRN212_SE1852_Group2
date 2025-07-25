@@ -11,10 +11,7 @@ public class NhanVienRepository : INhanVienRepository {
     public void Update(Nhanvien nv) {
         dao.Update(nv);
     }
-    public void Delete(int id) {
-        dao.Delete(id);
-    }
-    public Nhanvien GetById(int id) {
-        return dao.GetById(id);
-    }
+    public void Delete(string maNV) => dao.Delete(maNV);
+    public Nhanvien GetById(string maNV) => dao.GetById(maNV);
+    public List<Nhanvien> SearchByName(string tenNV) => dao.SearchByName(tenNV);
 } 

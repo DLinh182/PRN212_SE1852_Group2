@@ -189,7 +189,7 @@ public partial class QlShopQuanAoContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("MATK");
             entity.Property(e => e.NgaySinhNv)
-                .HasColumnType("datetime")
+                .HasColumnType("date")
                 .HasColumnName("NgaySinhNV");
             entity.Property(e => e.Nvl).HasColumnName("NVL");
             entity.Property(e => e.Sdtnv)

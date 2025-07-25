@@ -1,5 +1,6 @@
-using BusinessObject;
+﻿using BusinessObject;
 using DataAccessLayer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -29,23 +30,39 @@ public class DangNhapDAO
         _context.SaveChanges();
     }
 
-    public void Delete(int id)
+    public void Delete(string maTK)
     {
-        var tk = _context.Dangnhaps.Find(id);
-        if (tk != null)
+        var dangnhap = _context.Dangnhaps.FirstOrDefault(tk => tk.Matk == maTK);
+        if (dangnhap != null)
         {
-            _context.Dangnhaps.Remove(tk);
+            // Kiểm tra xem có nhân viên nào đang sử dụng tài khoản này không
+            // Nếu có, cần xử lý: hoặc ngăn xóa, hoặc set MATK của nhân viên đó về null.
+            // Giả sử mối quan hệ là cascade delete không được cấu hình,
+            // hoặc bạn muốn kiểm soát việc xóa tài khoản chỉ khi không có NV nào liên kết.
+            var nhanviensLinked = _context.Nhanviens.Any(nv => nv.Matk == maTK);
+            if (nhanviensLinked)
+            {
+                throw new InvalidOperationException("Không thể xóa tài khoản này vì có nhân viên đang liên kết với nó.");
+            }
+
+            _context.Dangnhaps.Remove(dangnhap);
             _context.SaveChanges();
         }
     }
 
-    public Dangnhap GetById(int id)
+    public Dangnhap GetById(string maTK)
     {
-        return _context.Dangnhaps.Find(id);
+        return _context.Dangnhaps.FirstOrDefault(tk => tk.Matk == maTK);
     }
 
     public bool KiemTraTaiKhoan(string taiKhoan, string matKhau)
     {
         return _context.Dangnhaps.Any(x => x.Taikhoan == taiKhoan && x.Matkhau == matKhau);
+    }
+
+    // Phương thức kiểm tra tài khoản đã tồn tại chưa
+    public bool IsTaiKhoanExists(string taiKhoan)
+    {
+        return _context.Dangnhaps.Any(tk => tk.Taikhoan == taiKhoan);
     }
 } 

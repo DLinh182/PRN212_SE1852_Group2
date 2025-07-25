@@ -11,13 +11,10 @@ public class DangNhapService : IDangNhapService {
     public void Update(Dangnhap tk) {
         repo.Update(tk);
     }
-    public void Delete(int id) {
-        repo.Delete(id);
-    }
-    public Dangnhap GetById(int id) {
-        return repo.GetById(id);
-    }
+    public void Delete(string maTK) => repo.Delete(maTK);
+    public Dangnhap GetById(string maTK) => repo.GetById(maTK);
     public bool KiemTraTaiKhoan(string taiKhoan, string matKhau) {
         return repo.KiemTraTaiKhoan(taiKhoan, matKhau);
     }
+    public bool IsTaiKhoanExists(string taiKhoan) => repo.IsTaiKhoanExists(taiKhoan);
 } 

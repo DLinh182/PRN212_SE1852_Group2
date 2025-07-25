@@ -1,5 +1,6 @@
-using BusinessObject;
+﻿using BusinessObject;
 using DataAccessLayer;
+using Microsoft.EntityFrameworkCore;
 
 public class NhanVienDAO
 {
@@ -27,9 +28,9 @@ public class NhanVienDAO
         _context.SaveChanges();
     }
 
-    public void Delete(int id)
+    public void Delete(string maNV)
     {
-        var nv = _context.Nhanviens.Find(id);
+        var nv = _context.Nhanviens.Find(maNV);
         if (nv != null)
         {
             _context.Nhanviens.Remove(nv);
@@ -37,8 +38,22 @@ public class NhanVienDAO
         }
     }
 
-    public Nhanvien GetById(int id)
+    public Nhanvien GetById(string maNV)
     {
-        return _context.Nhanviens.Find(id);
+        return _context.Nhanviens
+                           .Include(nv => nv.MatkNavigation)
+                           .FirstOrDefault(nv => nv.MaNv == maNV);
+    }
+
+    public List<Nhanvien> SearchByName(string tenNV)
+    {
+        if (string.IsNullOrWhiteSpace(tenNV))
+        {
+            return GetAll();
+        }
+        return _context.Nhanviens
+                       .Include(nv => nv.MatkNavigation)
+                       .Where(nv => nv.TenNv.Contains(tenNV))
+                       .ToList();
     }
 } 
