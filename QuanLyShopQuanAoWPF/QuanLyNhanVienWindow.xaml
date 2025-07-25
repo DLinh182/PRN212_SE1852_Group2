@@ -8,7 +8,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="250"/>
+            <RowDefinition Height="280"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -39,6 +39,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <TextBlock Text="Mã nhân viên:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,0" HorizontalAlignment="Right"/>
@@ -63,7 +64,15 @@
                 <TextBox x:Name="txtLuong" Grid.Row="2" Grid.Column="5" Height="28" Margin="0,10,0,0" VerticalAlignment="Center"/>
 
                 <TextBlock Text="Mã tài khoản:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="0,10,10,0" HorizontalAlignment="Right"/>
-                <ComboBox x:Name="cboMaTK" Grid.Row="3" Grid.Column="1" Height="28" Margin="0,10,0,0" VerticalAlignment="Center"/>
+                <TextBox x:Name="txtMaTK" Grid.Row="3" Grid.Column="1" Height="28" Margin="0,10,0,0" VerticalAlignment="Center"/>
+                <TextBlock Text="Tên tài khoản:" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" Margin="20,10,10,0" HorizontalAlignment="Right"/>
+                <TextBox x:Name="txtTaiKhoan" Grid.Row="3" Grid.Column="3" Height="28" Margin="0,10,0,0" VerticalAlignment="Center"/>
+                <TextBlock Text="Mật khẩu:" Grid.Row="3" Grid.Column="4" VerticalAlignment="Center" Margin="20,10,10,0" HorizontalAlignment="Right"/>
+                <TextBox x:Name="txtMatKhau" Grid.Row="3" Grid.Column="5" Height="28" Margin="0,10,0,0" VerticalAlignment="Center"/>
+
+                <TextBlock Text="Loại tài khoản:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Margin="0,10,10,0" HorizontalAlignment="Right"/>
+                <ComboBox x:Name="cboLoaiTK" Grid.Row="4" Grid.Column="1" Height="28" Margin="0,10,0,0" VerticalAlignment="Center"/>
+
             </Grid>
         </GroupBox>
 
@@ -78,17 +87,12 @@
             </Border>
 
             <StackPanel Grid.Row="1" Margin="10">
-                <Button x:Name="btnThem" Content="Thêm nhân viên" Height="35" Margin="0,10,0,5"/>
-                <Button x:Name="btnXoa" Content="Xoá nhân viên" Height="35" Margin="0,5,0,5"/>
-                <Button x:Name="btnSua" Content="Sửa nhân viên" Height="35" Margin="0,5,0,5"/>
-                <Button x:Name="btnLuu" Content="Lưu nhân viên" Height="35" Margin="0,5,0,15" IsEnabled="False"/>
+                <Button x:Name="btnThem" Content="Thêm nhân viên" Height="35" Margin="0,10,0,5" Click="BtnThem_Click"/>
+                <Button x:Name="btnXoa" Content="Xoá nhân viên" Height="35" Margin="0,5,0,5" Click="BtnXoa_Click"/>
+                <Button x:Name="btnSua" Content="Sửa nhân viên" Height="35" Margin="0,5,0,5" Click="BtnSua_Click"/>
+                <Button x:Name="btnLuu" Content="Lưu nhân viên" Height="35" Margin="0,5,0,15" IsEnabled="False" Click="BtnLuu_Click"/>
 
-                <Button x:Name="btnReset" Content="Reset công cụ" Height="35" Margin="0,0,0,15"/>
-
-                <Button x:Name="btnTaoTK" Content="Tạo tài khoản" Height="35" Margin="0,0,0,5"/>
-                <Button x:Name="btnXoaTK" Content="Xoá tài khoản" Height="35" Margin="0,5,0,5"/>
-                <Button x:Name="btnSuaTK" Content="Sửa tài khoản" Height="35" Margin="0,5,0,5"/>
-                <Button x:Name="btnLuuTK" Content="Lưu tài khoản" Height="35" Margin="0,5,0,0" IsEnabled="False"/>
+                <Button x:Name="btnReset" Content="Reset công cụ" Height="35" Margin="0,0,0,0" Click="BtnReset_Click"/>
             </StackPanel>
         </Grid>
 
@@ -96,40 +100,41 @@
             <DockPanel LastChildFill="False">
                 <TextBlock Text="Nhập tên nhân viên:" VerticalAlignment="Center" Margin="10,0,0,0"/>
                 <TextBox x:Name="txtTimKiem" Width="250" Height="28" Margin="10,0,0,0"/>
-                <Button x:Name="btnTimKiem" Content="Tìm kiếm" Width="100" Height="28" Margin="10,0,0,0"/>
+                <Button x:Name="btnTimKiem" Content="Tìm kiếm" Width="100" Height="28" Margin="10,0,0,0" Click="BtnTimKiem_Click"/>
             </DockPanel>
         </GroupBox>
 
         <Grid Grid.Row="4" Grid.Column="0" Margin="10,10,10,10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="420"/>
+                <ColumnDefinition Width="419*"/>
+                <ColumnDefinition Width="173*"/>
+                <ColumnDefinition Width="288"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Text="Danh sách nhân viên" FontSize="16" FontWeight="Bold" Grid.Row="0" Grid.Column="0" Margin="0,0,0,5"/>
-            <TextBlock Text="Tài khoản" FontSize="16" FontWeight="Bold" Grid.Row="0" Grid.Column="1" Margin="0,0,0,5"/>
+            <TextBlock Text="Danh sách nhân viên" FontSize="16" FontWeight="Bold" Grid.Row="0" Grid.Column="0" Margin="0,0,0,5" Grid.ColumnSpan="2"/>
+            <TextBlock Text="Tài khoản" FontSize="16" FontWeight="Bold" Grid.Row="0" Grid.Column="2" Margin="0,0,0,5"/>
 
-            <DataGrid x:Name="dgNhanVien" AutoGenerateColumns="False" Grid.Row="1" Grid.Column="0" Margin="0,0,10,0"
-                      IsReadOnly="True" SelectionMode="Single">
+            <DataGrid x:Name="dgNhanVien" AutoGenerateColumns="False" Grid.Column="0" Margin="0,26,5,0"
+                      IsReadOnly="True" SelectionMode="Single" Grid.RowSpan="2" Grid.ColumnSpan="2">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Mã nhân viên" Binding="{Binding MaNv}"/>
                     <DataGridTextColumn Header="Họ tên" Binding="{Binding TenNv}"/>
                     <DataGridTextColumn Header="Số điện thoại" Binding="{Binding Sdtnv}"/>
-                    <DataGridTextColumn Header="Ngày sinh" Binding="{Binding NgaySinhNv}"/>
+                    <DataGridTextColumn Header="Ngày sinh" Binding="{Binding NgaySinhNv, StringFormat='dd/MM/yyyy'}"/>
                     <DataGridTextColumn Header="Địa chỉ" Binding="{Binding DiaChiNv}"/>
                     <DataGridTextColumn Header="Giới tính" Binding="{Binding GioiTinhNv}"/>
                     <DataGridTextColumn Header="CCCD/CMND" Binding="{Binding Cccd}"/>
                     <DataGridTextColumn Header="Năm vào làm" Binding="{Binding Nvl}"/>
-                    <DataGridTextColumn Header="Lương" Binding="{Binding Luong}"/>
+                    <DataGridTextColumn Header="Lương" Binding="{Binding Luong, StringFormat=N0}"/>
                     <DataGridTextColumn Header="Mã tài khoản" Binding="{Binding Matk}"/>
                 </DataGrid.Columns>
             </DataGrid>
-            <DataGrid x:Name="dgTaiKhoan" AutoGenerateColumns="False" Grid.Row="1" Grid.Column="1"
-                      IsReadOnly="True" SelectionMode="Single">
+            <DataGrid x:Name="dgTaiKhoan" AutoGenerateColumns="False" Grid.Column="2"
+                      IsReadOnly="True" SelectionMode="Single" Margin="0,26,0,0" Grid.RowSpan="2">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Mã tài khoản" Binding="{Binding Matk}"/>
                     <DataGridTextColumn Header="Tài khoản" Binding="{Binding Taikhoan}"/>

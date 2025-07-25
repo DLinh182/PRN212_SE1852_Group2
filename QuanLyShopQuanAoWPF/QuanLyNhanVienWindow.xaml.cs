@@ -1,9 +1,11 @@
-using System.IO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 using BusinessObject;
-using Microsoft.Win32;
+using DataAccessLayer;
+using Microsoft.EntityFrameworkCore; // Đảm bảo namespace này đúng
 
 
 namespace QuanLyShopQuanAoWPF
@@ -11,23 +13,27 @@ namespace QuanLyShopQuanAoWPF
     public partial class QuanLyNhanVienWindow : Window
     {
         // Khai báo các Service
-        private readonly INhanVienService _nhanvienService = new NhanVienService();
-        private readonly IDangNhapService _dangnhapService = new DangNhapService();
-
-        // Biến để lưu trạng thái đang thêm/sửa nhân viên hoặc tài khoản
+        private readonly NhanVienService _nhanvienService = new NhanVienService(); // Đổi interface thành class
+        private readonly DangNhapService _dangnhapService = new DangNhapService(); // Đổi interface thành class
+        // Biến để lưu trạng thái đang thêm/sửa nhân viên
         private bool _isAddingNhanvien = false;
         private bool _isUpdatingNhanvien = false;
-        private bool _isAddingDangnhap = false;
-        private bool _isUpdatingDangnhap = false;
 
         // Biến để lưu đối tượng đang được chọn/thao tác
-        private Nhanvien _selectedNhanvien;
-        private Dangnhap _selectedDangnhap;
+        private Nhanvien? _selectedNhanvien; // Dùng kiểu nullable để tránh lỗi null reference
+        private Dangnhap? _selectedDangnhap; // Dùng kiểu nullable
+
         public QuanLyNhanVienWindow()
         {
             InitializeComponent();
+            // Khởi tạo các controls và load dữ liệu khi cửa sổ được tải hoàn toàn
+            Loaded += QuanLyNhanVienWindow_Loaded;
+        }
+
+        private void QuanLyNhanVienWindow_Loaded(object sender, RoutedEventArgs e)
+        {
             InitializeControls();
-            LoadData(); // Tải dữ liệu ban đầu
+            LoadData();
         }
 
         private void InitializeControls()
@@ -36,40 +42,36 @@ namespace QuanLyShopQuanAoWPF
             cboGioiTinh.ItemsSource = new List<string> { "Nam", "Nữ", "Khác" };
             cboGioiTinh.SelectedIndex = 0; // Chọn mặc định "Nam"
 
+            // Thiết lập ComboBox Loại tài khoản
+            cboLoaiTK.ItemsSource = new List<string> { "admin", "user" };
+            cboLoaiTK.SelectedIndex = 0; // Chọn mặc định "Nhân viên"
+
+            SetInputEnabled(false);
+            btnLuu.IsEnabled = false;
+            txtMaNV.IsReadOnly = true;
+            txtMaTK.IsReadOnly = true; // Mã TK luôn chỉ đọc
+
             // Gán sự kiện cho các nút
             btnThem.Click += BtnThem_Click;
             btnSua.Click += BtnSua_Click;
             btnXoa.Click += BtnXoa_Click;
-            btnLuu.Click += BtnLuuTK_Click;
+            btnLuu.Click += BtnLuu_Click; // Đổi từ BtnLuuTK_Click sang BtnLuu_Click
             btnReset.Click += BtnReset_Click;
             btnTimKiem.Click += BtnTimKiem_Click;
 
-            btnTaoTK.Click += BtnTaoTK_Click;
-            btnXoaTK.Click += BtnXoaTK_Click;
-            btnSuaTK.Click += BtnSuaTK_Click;
-            btnLuuTK.Click += BtnLuuTK_Click;
+            // Bỏ gán sự kiện cho các nút quản lý TK riêng (nếu có) vì đã loại bỏ chúng trong XAML
+            // btnXoaTK.Click += BtnXoaTK_Click;
+            // btnSuaTK.Click += BtnSuaTK_Click;
 
             // Gán sự kiện khi chọn một dòng trên DataGrid
             dgNhanVien.SelectionChanged += DgNhanVien_SelectionChanged;
-            dgTaiKhoan.SelectionChanged += DgTaiKhoan_SelectionChanged;
+            dgTaiKhoan.SelectionChanged += DgTaiKhoan_SelectionChanged; // Vẫn giữ để hiển thị (chỉ đọc)
 
             // Vô hiệu hóa các trường nhập liệu và nút Lưu ban đầu
-            SetNhanvienInputEnabled(false);
-            SetDangnhapInputEnabled(false);
+            SetInputEnabled(false); ;
             btnLuu.IsEnabled = false;
-            btnLuuTK.IsEnabled = false;
             txtMaNV.IsReadOnly = true; // Mã NV chỉ đọc khi sửa/hiển thị
-
-            // Thêm các controls cho tài khoản nếu chưa có trong XAML
-            // Để quản lý tài khoản, bạn cần thêm các controls sau vào XAML:
-            // <TextBlock Text="Mã TK ĐN:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center"/>
-            // <TextBox x:Name="txtMaTKDN" Grid.Row="4" Grid.Column="1" Height="28"/>
-            // <TextBlock Text="Tên TK ĐN:" Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" Margin="50,0,0,0"/>
-            // <TextBox x:Name="txtTenTKDN" Grid.Row="4" Grid.Column="3" Height="28"/>
-            // <TextBlock Text="Mật khẩu TK:" Grid.Row="4" Grid.Column="4" VerticalAlignment="Center" Margin="63,0,0,0"/>
-            // <TextBox x:Name="txtMatKhauTKDN" Grid.Row="4" Grid.Column="5" Height="28"/>
-            // <TextBlock Text="Loại TK:" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center"/>
-            // <ComboBox x:Name="cboLoaiTKDN" Grid.Row="5" Grid.Column="1" Height="28"/>
+            txtMaTK.IsReadOnly = true; // Mã TK chỉ đọc khi sửa/hiển thị
         }
 
         private void LoadData()
@@ -82,76 +84,64 @@ namespace QuanLyShopQuanAoWPF
                 // Load danh sách tài khoản vào DataGrid TaiKhoan
                 dgTaiKhoan.ItemsSource = _dangnhapService.GetAll();
 
-                // Load danh sách tài khoản vào ComboBox MaTK (cho Nhân viên)
-                cboMaTK.ItemsSource = _dangnhapService.GetAll();
-                cboMaTK.DisplayMemberPath = "TAIKHOAN";
-                cboMaTK.SelectedValuePath = "MATK"; // Đảm bảo đúng tên property của khóa chính
-
                 // Reset trạng thái và giao diện
                 ResetFormState();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                Console.WriteLine($"Error loading data: {ex.ToString()}"); // Để debug lỗi chi tiết hơn
             }
         }
 
         private void ResetFormState()
         {
-            ClearNhanvienInputs();
-            // ClearTaiKhoanInputs(); // Nếu có riêng biệt controls cho TK
-            SetNhanvienInputEnabled(false);
-            SetDangnhapInputEnabled(false);
+            ClearInputs(); // Gọi hàm xóa tất cả inputs
+            SetInputEnabled(false); // Vô hiệu hóa tất cả inputs
             btnLuu.IsEnabled = false;
-            btnLuuTK.IsEnabled = false;
             txtMaNV.IsReadOnly = true;
+            txtMaTK.IsReadOnly = true; // Mã TK cũng chỉ đọc khi reset
 
             // Bật lại các nút thao tác chính
             btnThem.IsEnabled = true;
             btnSua.IsEnabled = true;
             btnXoa.IsEnabled = true;
             btnTimKiem.IsEnabled = true;
-            btnTaoTK.IsEnabled = true;
-            btnXoaTK.IsEnabled = true;
-            btnSuaTK.IsEnabled = true;
 
+            // Bỏ chọn trên DataGrid
+            dgNhanVien.SelectedItem = null;
+            dgTaiKhoan.SelectedItem = null;
+
+            // Reset trạng thái
             _isAddingNhanvien = false;
             _isUpdatingNhanvien = false;
-            _isAddingDangnhap = false;
-            _isUpdatingDangnhap = false;
             _selectedNhanvien = null;
             _selectedDangnhap = null;
-
-            dgNhanVien.SelectedItem = null; // Bỏ chọn trên DataGrid
-            dgTaiKhoan.SelectedItem = null; // Bỏ chọn trên DataGrid
         }
 
-        private void ClearNhanvienInputs()
+        // Hàm xóa trắng tất cả các trường nhập liệu (cả nhân viên và tài khoản)
+        private void ClearInputs()
         {
             txtMaNV.Clear();
             txtTenNV.Clear();
-            cboGioiTinh.SelectedIndex = 0;
+            cboGioiTinh.SelectedIndex = -1; // Đặt về không chọn
             txtSDTNV.Clear();
             txtNgaySinh.Clear();
             txtDiaChi.Clear();
             txtCCCD.Clear();
             txtNamVaoLam.Clear();
             txtLuong.Clear();
-            cboMaTK.SelectedIndex = -1; // Bỏ chọn tài khoản
+
+            txtMaTK.Clear();
+            txtTaiKhoan.Clear();
+            txtMatKhau.Clear();
+            cboLoaiTK.SelectedIndex = -1; // Đặt về không chọn
         }
 
-        private void ClearDangnhapInputs()
+        // Hàm bật/tắt trạng thái Enabled/IsReadOnly cho tất cả các trường nhập liệu
+        private void SetInputEnabled(bool enabled)
         {
-            // Nếu có các TextBox riêng biệt cho Tài khoản (ví dụ: txtMaTKDN, txtTenTKDN, txtMatKhauTKDN, cboLoaiTKDN)
-            // txtMaTKDN.Clear();
-            // txtTenTKDN.Clear();
-            // txtMatKhauTKDN.Clear();
-            // cboLoaiTKDN.SelectedIndex = -1;
-        }
-
-        private void SetNhanvienInputEnabled(bool enabled)
-        {
-            // txtMaNV.IsEnabled = enabled; // Mã NV được quản lý bởi IsReadOnly
+            // Trường Nhân viên
             txtTenNV.IsEnabled = enabled;
             cboGioiTinh.IsEnabled = enabled;
             txtSDTNV.IsEnabled = enabled;
@@ -160,308 +150,335 @@ namespace QuanLyShopQuanAoWPF
             txtCCCD.IsEnabled = enabled;
             txtNamVaoLam.IsEnabled = enabled;
             txtLuong.IsEnabled = enabled;
-            cboMaTK.IsEnabled = enabled;
+
+            // Trường Tài khoản
+           // txtMaTK.IsEnabled = enabled;
+            txtTaiKhoan.IsEnabled = enabled;
+            txtMatKhau.IsEnabled = enabled;
+            cboLoaiTK.IsEnabled = enabled;
         }
 
-        private void SetDangnhapInputEnabled(bool enabled)
-        {
-            // Nếu có các TextBox riêng biệt cho Tài khoản
-            // txtMaTKDN.IsEnabled = enabled;
-            // txtTenTKDN.IsEnabled = enabled;
-            // txtMatKhauTKDN.IsEnabled = enabled;
-            // cboLoaiTKDN.IsEnabled = enabled;
-            // txtMaTKDN.IsReadOnly = !enabled || _isUpdatingDangnhap; // Mã TK chỉ đọc khi sửa
-        }
 
         // --- Lấy dữ liệu từ UI và gán vào Object ---
-        private Nhanvien GetNhanvienFromInputs()
+        // Hàm này sẽ trả về cả Nhanvien và Dangnhap
+        private (Nhanvien?, Dangnhap?) GetNhanvienAndAccountFromInputs()
         {
-            var nv = _selectedNhanvien ?? new Nhanvien();
+            // Nếu đang sửa, sử dụng _selectedNhanvien (đã được theo dõi)
+            // Ngược lại, tạo đối tượng mới cho chế độ thêm
+            var nv = _isUpdatingNhanvien ? _selectedNhanvien : new Nhanvien();
+            var tk = _isUpdatingNhanvien ? _selectedDangnhap : new Dangnhap(); // Sẽ tạo mới hoặc dùng _selectedDangnhap
 
-            // Nếu là thêm mới, Mã NV cần được nhập hoặc tạo tự động
-            if (_isAddingNhanvien)
-            {
-                if (string.IsNullOrWhiteSpace(txtMaNV.Text))
-                {
-                    MessageBox.Show("Vui lòng nhập Mã nhân viên.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return null;
-                }
-                nv.MaNv = txtMaNV.Text.Trim();
-            }
-            // Nếu là sửa, Mã NV không thay đổi
-            else if (_isUpdatingNhanvien)
+            if (_isUpdatingNhanvien && nv == null) return (null, null); // Lỗi nếu đang sửa mà _selectedNhanvien null
+
+            // Cập nhật thông tin Nhanvien từ UI
+            // Lưu ý: KHÔNG gán lại nv.MaNv nếu đang sửa
+            if (!_isUpdatingNhanvien) // Chỉ gán MaNv khi thêm mới
             {
                 nv.MaNv = txtMaNV.Text.Trim();
             }
-
+            // Các thuộc tính khác thì cập nhật bình thường
             nv.TenNv = txtTenNV.Text.Trim();
-            nv.GioiTinhNv = cboGioiTinh.SelectedItem?.ToString();
+            nv.GioiTinhNv = cboGioiTinh.SelectedValue?.ToString();
             nv.Sdtnv = txtSDTNV.Text.Trim();
             nv.DiaChiNv = txtDiaChi.Text.Trim();
             nv.Cccd = txtCCCD.Text.Trim();
-            nv.Matk = cboMaTK.SelectedValue?.ToString(); // Lấy MATK từ ComboBox
 
-            // Validate và Parse Ngày sinh
-            if (DateOnly.TryParseExact(txtNgaySinh.Text, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateOnly ngaySinh))
-            {
-                nv.NgaySinhNv = ngaySinh;
-                // ... (your existing successful code)
-            }
-            else
+            if (!DateOnly.TryParseExact(txtNgaySinh.Text, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateOnly ngaySinh))
             {
                 MessageBox.Show("Ngày sinh không hợp lệ. Vui lòng nhập theo định dạng dd/MM/yyyy.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return null;
+                return (null, null);
             }
+            nv.NgaySinhNv = ngaySinh;
 
-            // Validate và Parse Năm vào làm
-            if (int.TryParse(txtNamVaoLam.Text, out int namVaoLam))
-            {
-                nv.Nvl = namVaoLam;
-            }
-            else
+            if (!int.TryParse(txtNamVaoLam.Text, out int namVaoLam))
             {
                 MessageBox.Show("Năm vào làm không hợp lệ. Vui lòng nhập số nguyên.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return null;
+                return (null, null);
+            }
+            nv.Nvl = namVaoLam;
+
+            if (!decimal.TryParse(txtLuong.Text, System.Globalization.NumberStyles.Currency, System.Globalization.CultureInfo.CurrentCulture, out decimal luong))
+            {
+                MessageBox.Show("Lương không hợp lệ. Vui lòng nhập số.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return (null, null);
+            }
+            nv.Luong = luong;
+
+            // Kiểm tra các trường bắt buộc khác cho Nhanvien (tùy thuộc vào logic của bạn)
+            if (string.IsNullOrWhiteSpace(nv.TenNv) || string.IsNullOrWhiteSpace(nv.Sdtnv) ||
+                string.IsNullOrWhiteSpace(nv.DiaChiNv) || string.IsNullOrWhiteSpace(nv.Cccd) ||
+                string.IsNullOrWhiteSpace(nv.GioiTinhNv) || !nv.Nvl.HasValue || !nv.Luong.HasValue)
+            {
+                MessageBox.Show("Vui lòng nhập đầy đủ các thông tin nhân viên bắt buộc.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return (null, null);
             }
 
-            // Validate và Parse Lương
-            if (decimal.TryParse(txtLuong.Text, out decimal luong))
+            // Tạo/cập nhật đối tượng Dangnhap tạm thời (nếu tk null thì tạo mới)
+            var tkFromInputs = tk ?? new Dangnhap(); // Sử dụng tk nếu nó đã tồn tại, ngược lại tạo mới
+
+            // Đối với tài khoản, nếu đang sửa, Matk của tkFromInputs sẽ là Matk của _selectedDangnhap
+            // Nếu thêm mới, Matk sẽ được gán sau đó.
+            tkFromInputs.Matk = _selectedDangnhap?.Matk ?? string.Empty; // Đảm bảo Matk không bị thay đổi nếu đang sửa
+
+            tkFromInputs.Taikhoan = txtTaiKhoan.Text.Trim();
+            tkFromInputs.Matkhau = txtMatKhau.Text.Trim();
+            tkFromInputs.Loaitk = cboLoaiTK.SelectedValue?.ToString();
+
+            if (string.IsNullOrWhiteSpace(tkFromInputs.Taikhoan) || string.IsNullOrWhiteSpace(tkFromInputs.Matkhau) || string.IsNullOrWhiteSpace(tkFromInputs.Loaitk))
             {
-                nv.Luong = luong;
+                MessageBox.Show("Vui lòng nhập đầy đủ các thông tin tài khoản bắt buộc (Tài khoản, Mật khẩu, Loại tài khoản).", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return (null, null);
+            }
+
+            return (nv, tkFromInputs);
+        }
+
+
+        // --- Hiển thị dữ liệu lên UI ---
+        // Hàm này sẽ hiển thị cả Nhanvien và Dangnhap
+        private void DisplayNhanvienAndAccount(Nhanvien nv, Dangnhap? tk)
+        {
+            // Hiển thị thông tin Nhân viên
+            txtMaNV.Text = nv.MaNv ?? string.Empty;
+            txtTenNV.Text = nv.TenNv ?? string.Empty;
+            cboGioiTinh.SelectedValue = nv.GioiTinhNv;
+            txtSDTNV.Text = nv.Sdtnv ?? string.Empty;
+            txtNgaySinh.Text = nv.NgaySinhNv?.ToString("dd/MM/yyyy") ?? string.Empty;
+            txtDiaChi.Text = nv.DiaChiNv ?? string.Empty;
+            txtCCCD.Text = nv.Cccd ?? string.Empty;
+            txtNamVaoLam.Text = nv.Nvl?.ToString() ?? string.Empty;
+            txtLuong.Text = nv.Luong?.ToString("N0") ?? string.Empty; // Định dạng tiền tệ
+
+            // Hiển thị thông tin Tài khoản (nếu có)
+            if (tk != null)
+            {
+                txtMaTK.Text = tk.Matk ?? string.Empty;
+                txtTaiKhoan.Text = tk.Taikhoan ?? string.Empty;
+                txtMatKhau.Text = tk.Matkhau ?? string.Empty; // Cẩn thận với mật khẩu thực tế
+                cboLoaiTK.SelectedValue = tk.Loaitk;
             }
             else
             {
-                MessageBox.Show("Lương không hợp lệ. Vui lòng nhập số.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return null;
+                // Nếu không có tài khoản liên kết, xóa trắng các trường tài khoản
+                txtMaTK.Clear();
+                txtTaiKhoan.Clear();
+                txtMatKhau.Clear();
+                cboLoaiTK.SelectedIndex = -1;
             }
-
-            // Kiểm tra các trường bắt buộc khác
-            if (string.IsNullOrWhiteSpace(nv.TenNv) || string.IsNullOrWhiteSpace(nv.Sdtnv) ||
-                string.IsNullOrWhiteSpace(nv.DiaChiNv) || string.IsNullOrWhiteSpace(nv.Cccd) ||
-                string.IsNullOrWhiteSpace(nv.GioiTinhNv))
-            {
-                MessageBox.Show("Vui lòng nhập đầy đủ các thông tin nhân viên bắt buộc.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return null;
-            }
-
-            return nv;
-        }
-
-        private Dangnhap GetDangnhapFromInputs()
-        {
-            // Để hàm này hoạt động, bạn cần có các TextBox riêng biệt cho Mã TK, Tên TK, Mật khẩu, Loại TK trong XAML
-            // Hiện tại, tôi sẽ giả định bạn đã thêm chúng vào.
-            // Nếu chưa có, các hàm này sẽ không hoạt động hoặc cần được điều chỉnh.
-
-            //var tk = _selectedDangnhap ?? new Dangnhap();
-            //if (_isAddingDangnhap)
-            //{
-            //    if (string.IsNullOrWhiteSpace(txtMaTKDN.Text))
-            //    {
-            //        MessageBox.Show("Vui lòng nhập Mã tài khoản.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
-            //        return null;
-            //    }
-            //    tk.Matk = txtMaTKD.Text.Trim();
-            //}
-            //else if (_isUpdatingDangnhap)
-            //{
-            //    tk.MATK = txtMaTKDN.Text.Trim();
-            //}
-            //tk.Taikhoan = txtTenTKDN.Text.Trim();
-            //tk.Matkhau = txtMatKhauTKDN.Text; // Cẩn thận với mật khẩu
-            //tk.Loaitk = cboMaTK.SelectedItem?.ToString();
-
-            //// Kiểm tra các trường bắt buộc cho tài khoản
-            //if (string.IsNullOrWhiteSpace(tk.Taikhoan) || string.IsNullOrWhiteSpace(tk.Matkhau) ||
-            //    string.IsNullOrWhiteSpace(tk.Loaitk))
-            //{
-            //    MessageBox.Show("Vui lòng nhập đầy đủ thông tin tài khoản: Tên tài khoản, Mật khẩu, Loại tài khoản.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
-            //    return null;
-            //}
-
-            //return tk;
-            MessageBox.Show("Chức năng quản lý Tài Khoản (GetDangnhapFromInputs) yêu cầu các trường nhập liệu riêng biệt cho Tài Khoản trong XAML.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-            return null; // Trả về null nếu không có form nhập liệu tài khoản riêng
-        }
-
-        // --- Hiển thị dữ liệu lên UI ---
-        private void DisplayNhanvien(Nhanvien nv)
-        {
-            if (nv != null)
-            {
-                txtMaNV.Text = nv.MaNv;
-                txtTenNV.Text = nv.TenNv;
-                cboGioiTinh.SelectedItem = nv.GioiTinhNv;
-                txtSDTNV.Text = nv.Sdtnv;
-                txtNgaySinh.Text = nv.NgaySinhNv?.ToString("dd/MM/yyyy"); // Định dạng ngày tháng
-                txtDiaChi.Text = nv.DiaChiNv;
-                txtCCCD.Text = nv.Cccd;
-                txtNamVaoLam.Text = nv.Nvl.ToString();
-                txtLuong.Text = nv.Luong.ToString(); // Định dạng tiền tệ không có phần thập phân
-                cboMaTK.SelectedValue = nv.Matk; // Chọn tài khoản liên kết trong ComboBox
-            }
-        }
-
-        private void DisplayDangnhap(Dangnhap tk)
-        {
-            // Nếu có các TextBox riêng biệt cho Tài khoản, hiển thị ở đây
-            //if (tk != null)
-            //{
-            //    txtMaTKDN.Text = tk.Matk;
-            //    txtTenTKDN.Text = tk.Taikhoan;
-            //    txtMatKhauTKDN.Text = tk.Matkhau; // Cẩn thận với việc hiển thị mật khẩu
-            //    cboLoaiTKDN.SelectedItem = tk.Loaitk;
-            //}
         }
 
         // --- Sự kiện DataGrid ---
         private void DgNhanVien_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (dgNhanVien.SelectedItem is Nhanvien nv)
+            if (dgNhanVien.SelectedItem is Nhanvien selectedNv)
             {
-                _selectedNhanvien = nv;
-                DisplayNhanvien(nv);
-
-                // Khi chọn NV, có thể load và chọn TK tương ứng trong dgTaiKhoan (nếu có)
-                if (!string.IsNullOrEmpty(nv.Matk))
+                _selectedNhanvien = selectedNv;
+                // Lấy thông tin tài khoản liên kết
+                _selectedDangnhap = null;
+                if (!string.IsNullOrEmpty(selectedNv.Matk))
                 {
-                    _selectedDangnhap = _dangnhapService.GetById(nv.Matk);
-                    // Để chọn dòng trong dgTaiKhoan, bạn cần phải tìm đối tượng đó trong ItemsSource của dgTaiKhoan
-                    // Hoặc bạn có thể chỉ đơn giản là DisplayDangnhap(_selectedDangnhap) nếu có các controls riêng
-                    if (dgTaiKhoan.ItemsSource is IEnumerable<Dangnhap> dangnhapList)
-                    {
-                        dgTaiKhoan.SelectedItem = dangnhapList.FirstOrDefault(t => t.Matk == nv.Matk);
-                    }
+                    _selectedDangnhap = _dangnhapService.GetById(selectedNv.Matk);
                 }
-                else
-                {
-                    _selectedDangnhap = null;
-                    dgTaiKhoan.SelectedItem = null;
-                    // ClearDangnhapInputs(); // Nếu có riêng biệt controls cho TK
-                }
+                DisplayNhanvienAndAccount(_selectedNhanvien, _selectedDangnhap);
 
-                // Chuyển sang chế độ sửa khi chọn
-                SetNhanvienInputEnabled(true);
-                txtMaNV.IsReadOnly = true; // Mã NV không cho sửa
-                btnLuu.IsEnabled = true;
-                _isAddingNhanvien = false;
-                _isUpdatingNhanvien = true;
+                SetInputEnabled(false);
+                txtMaNV.IsReadOnly = true; // Mã NV không thể sửa
+                txtMaTK.IsReadOnly = true; // Mã TK không thể sửa
+
+                btnSua.IsEnabled = true;
+                btnXoa.IsEnabled = true;
+                btnLuu.IsEnabled = false; // Luôn disable Lưu khi chỉ chọn
+                btnThem.IsEnabled = true;
+            }
+            else
+            {
+                ClearInputs();
+                _selectedNhanvien = null;
+                _selectedDangnhap = null;
             }
         }
 
         private void DgTaiKhoan_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (dgTaiKhoan.SelectedItem is Dangnhap tk)
-            {
-                _selectedDangnhap = tk;
-                DisplayDangnhap(tk); // Hiển thị lên các textbox tài khoản nếu có
-
-                // Khi chọn TK, có thể tự động chọn NV liên quan (nếu có 1-1 hoặc tìm NV đầu tiên liên kết)
-                // Theo diagram 1 Dangnhap có nhiều Nhanvien, nên việc tự động chọn 1 NV cụ thể sẽ phức tạp hơn.
-                // Để đơn giản, ta chỉ hiển thị thông tin TK lên form TK (nếu có).
-
-                // Chuyển sang chế độ sửa tài khoản (nếu có các control riêng)
-                SetDangnhapInputEnabled(true);
-                btnLuuTK.IsEnabled = true;
-                _isAddingDangnhap = false;
-                _isUpdatingDangnhap = true;
-            }
+            // Trong trường hợp này, việc chọn tài khoản trong DataGrid chỉ để xem.
+            // Mọi thao tác Thêm/Sửa/Xóa sẽ được thực hiện thông qua form Nhân viên.
+            // Nếu bạn muốn hiển thị tài khoản đã chọn lên các ô nhập, bạn có thể gọi DisplayDangnhap ở đây
+            // nhưng cần đảm bảo nó không gây xung đột với việc hiển thị của Nhanvien.
+            // Hiện tại, chúng ta không cần thêm logic phức tạp ở đây.
         }
 
+        // --- Các sự kiện nút hành động ---
         private void BtnThem_Click(object sender, RoutedEventArgs e)
         {
-            ClearNhanvienInputs();
-            SetNhanvienInputEnabled(true);
+            ClearInputs();
+            SetInputEnabled(true);
             txtMaNV.IsReadOnly = false; // Cho phép nhập mã NV mới
+            txtMaTK.IsReadOnly = true; // Cho phép nhập mã TK mới
             btnLuu.IsEnabled = true;
 
             _isAddingNhanvien = true;
             _isUpdatingNhanvien = false;
             _selectedNhanvien = null; // Đảm bảo tạo mới
+            _selectedDangnhap = null; // Đảm bảo tạo mới
             dgNhanVien.SelectedItem = null; // Bỏ chọn trên DataGrid
+            dgTaiKhoan.SelectedItem = null; // Bỏ chọn trên DataGrid
 
-            MessageBox.Show("Vui lòng nhập thông tin nhân viên mới.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Vui lòng nhập thông tin nhân viên và tài khoản mới.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
             txtMaNV.Focus();
         }
 
         private void BtnSua_Click(object sender, RoutedEventArgs e)
         {
-            if (dgNhanVien.SelectedItem is Nhanvien nvToEdit)
-            {
-                _selectedNhanvien = nvToEdit;
-                DisplayNhanvien(nvToEdit);
-                SetNhanvienInputEnabled(true);
-                txtMaNV.IsReadOnly = true; // Không cho phép sửa mã NV
-                btnLuu.IsEnabled = true;
-
-                _isAddingNhanvien = false;
-                _isUpdatingNhanvien = true;
-
-                MessageBox.Show($"Bạn đang sửa thông tin nhân viên: {nvToEdit.TenNv}", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
+            if (_selectedNhanvien == null)
             {
                 MessageBox.Show("Vui lòng chọn một nhân viên để sửa.", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }   
+                return;
+            }
 
+            SetInputEnabled(true);
+            txtMaNV.IsReadOnly = true; // Không cho phép sửa mã NV
+            txtMaTK.IsReadOnly = true; // Không cho phép sửa mã TK khi sửa NV để tránh phức tạp
+
+            btnLuu.IsEnabled = true;
+
+            _isAddingNhanvien = false;
+            _isUpdatingNhanvien = true;
+
+            MessageBox.Show("Bạn có thể chỉnh sửa thông tin nhân viên và tài khoản đã chọn.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void BtnXoa_Click(object sender, RoutedEventArgs e)
         {
-            if (dgNhanVien.SelectedItem is Nhanvien nvToDelete)
-            {
-                MessageBoxResult result = MessageBox.Show($"Bạn có chắc muốn xóa nhân viên '{nvToDelete.TenNv}' không?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
-                {
-                    try
-                    {
-                        _nhanvienService.Delete(nvToDelete.MaNv);
-                        MessageBox.Show("Xóa nhân viên thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        LoadData(); // Tải lại dữ liệu sau khi xóa
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Lỗi khi xóa nhân viên: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
-            }
-            else
+            if (_selectedNhanvien == null)
             {
                 MessageBox.Show("Vui lòng chọn một nhân viên để xóa.", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            MessageBoxResult result = MessageBox.Show($"Bạn có chắc chắn muốn xóa nhân viên '{_selectedNhanvien.TenNv}' và tài khoản liên kết (nếu có)?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    string? maTkToDelete = _selectedNhanvien.Matk;
+
+                    // Xóa nhân viên trước
+                    _nhanvienService.Delete(_selectedNhanvien.MaNv);
+
+                    // Sau đó xóa tài khoản liên kết nếu tồn tại và không có nhân viên khác dùng chung
+                    if (!string.IsNullOrEmpty(maTkToDelete))
+                    {
+                        var accountsLinked = _nhanvienService.GetAll().Any(nv => nv.Matk == maTkToDelete);
+                        if (!accountsLinked) // Chỉ xóa tài khoản nếu không còn nhân viên nào khác liên kết
+                        {
+                            _dangnhapService.Delete(maTkToDelete);
+                        }
+                    }
+
+                    MessageBox.Show("Xóa nhân viên và tài khoản liên kết thành công (nếu không còn nhân viên nào khác sử dụng tài khoản đó)!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                    LoadData(); // Tải lại dữ liệu sau khi xóa
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi xóa nhân viên/tài khoản: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Console.WriteLine($"Error deleting Nhanvien/Dangnhap: {ex.ToString()}");
+                }
             }
         }
 
-        private void BtnTimKiem_Click(object sender, RoutedEventArgs e)
+        private void BtnLuu_Click(object sender, RoutedEventArgs e)
         {
-            Nhanvien nvToSave = GetNhanvienFromInputs();
-            if (nvToSave == null) return; // Validation thất bại
+            (Nhanvien? nvToSave, Dangnhap? tkFromInputs) = GetNhanvienAndAccountFromInputs();
+
+            if (nvToSave == null || tkFromInputs == null) return;
 
             try
             {
                 if (_isAddingNhanvien)
                 {
-                    // Kiểm tra trùng mã NV
+                    // Logic thêm mới (giữ nguyên hoặc cập nhật như đã trao đổi trước đó)
                     if (_nhanvienService.GetById(nvToSave.MaNv) != null)
                     {
-                        MessageBox.Show("Mã nhân viên này đã tồn tại. Vui lòng chọn mã khác.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("Mã nhân viên đã tồn tại. Vui lòng nhập mã khác.", "Lỗi trùng lặp", MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
+
+                    if (_dangnhapService.IsTaiKhoanExists(tkFromInputs.Taikhoan))
+                    {
+                        MessageBox.Show("Tên tài khoản này đã tồn tại. Vui lòng chọn tên khác.", "Lỗi trùng lặp", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    tkFromInputs.Matk = "TK" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+                    while (_dangnhapService.GetById(tkFromInputs.Matk) != null)
+                    {
+                        tkFromInputs.Matk = "TK" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+                    }
+
+                    _dangnhapService.Add(tkFromInputs);
+                    nvToSave.Matk = tkFromInputs.Matk;
                     _nhanvienService.Add(nvToSave);
-                    MessageBox.Show("Thêm nhân viên thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Thêm nhân viên và tài khoản thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else if (_isUpdatingNhanvien)
                 {
-                    _nhanvienService.Update(nvToSave);
-                    MessageBox.Show("Cập nhật nhân viên thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Cập nhật thông tin tài khoản
+                    if (_selectedDangnhap != null) // Nếu nhân viên đã có tài khoản
+                    {
+                        // Kiểm tra trùng tên tài khoản nếu tên bị thay đổi
+                        if (_dangnhapService.IsTaiKhoanExists(tkFromInputs.Taikhoan) && tkFromInputs.Taikhoan != _selectedDangnhap.Taikhoan)
+                        {
+                            MessageBox.Show("Tên tài khoản này đã tồn tại. Vui lòng chọn tên khác.", "Lỗi trùng lặp", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            return;
+                        }
+
+                        // Cập nhật các thuộc tính của đối tượng _selectedDangnhap (đã được theo dõi)
+                        _selectedDangnhap.Taikhoan = tkFromInputs.Taikhoan;
+                        _selectedDangnhap.Matkhau = tkFromInputs.Matkhau;
+                        _selectedDangnhap.Loaitk = tkFromInputs.Loaitk;
+
+                        _dangnhapService.Update(_selectedDangnhap); // Gọi update trên đối tượng đã theo dõi
+                    }
+                    else // Nhân viên chưa có tài khoản, thêm tài khoản mới cho nhân viên này
+                    {
+                        if (_dangnhapService.IsTaiKhoanExists(tkFromInputs.Taikhoan))
+                        {
+                            MessageBox.Show("Tên tài khoản này đã tồn tại. Vui lòng chọn tên khác.", "Lỗi trùng lặp", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            return;
+                        }
+
+                        tkFromInputs.Matk = "TK" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+                        while (_dangnhapService.GetById(tkFromInputs.Matk) != null)
+                        {
+                            tkFromInputs.Matk = "TK" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+                        }
+                        _dangnhapService.Add(tkFromInputs);
+                        _selectedNhanvien.Matk = tkFromInputs.Matk; // Gán Matk mới cho nhân viên đang được theo dõi
+                    }
+
+                    // Cập nhật thông tin nhân viên
+                    // Các thuộc tính của _selectedNhanvien đã được cập nhật trong GetNhanvienAndAccountFromInputs
+                    _nhanvienService.Update(_selectedNhanvien); // Gọi update trên đối tượng đã theo dõi
+
+                    MessageBox.Show("Cập nhật nhân viên và tài khoản thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 
-                LoadData(); // Tải lại dữ liệu sau khi lưu
+                LoadData();
+                ResetFormState();
+            }
+            catch (DbUpdateException dbEx)
+            {
+                MessageBox.Show($"Lỗi cơ sở dữ liệu: {dbEx.Message}\nChi tiết: {dbEx.InnerException?.Message}", "Lỗi DB", MessageBoxButton.OK, MessageBoxImage.Error);
+                Console.WriteLine($"DbUpdateException: {dbEx.ToString()}");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi lưu nhân viên: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Lỗi khi lưu nhân viên/tài khoản: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                Console.WriteLine($"Error saving Nhanvien/Dangnhap: {ex.ToString()}");
             }
         }
+
 
         private void BtnReset_Click(object sender, RoutedEventArgs e)
         {
@@ -469,117 +486,29 @@ namespace QuanLyShopQuanAoWPF
             MessageBox.Show("Trạng thái form đã được reset.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        // --- Chức năng quản lý TÀI KHOẢN ---
-        // Các hàm này sẽ cần các controls riêng biệt cho Tài khoản trong XAML để hoạt động đầy đủ.
-
-        private void BtnTaoTK_Click(object sender, RoutedEventArgs e)
+        private void BtnTimKiem_Click(object sender, RoutedEventArgs e)
         {
-            // Để tạo tài khoản mới, bạn cần có các trường nhập liệu cho tài khoản
-            // (ví dụ: txtMaTKDN, txtTenTKDN, txtMatKhauTKDN, cboLoaiTKDN)
-            // Hiện tại, chỉ có thể chọn tài khoản đã tồn tại qua cboMaTK.
-            MessageBox.Show("Chức năng 'Tạo tài khoản' yêu cầu các trường nhập liệu riêng biệt cho Tài Khoản trong XAML.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            // Ví dụ nếu bạn có các control riêng:
-            //ClearDangnhapInputs();
-            //SetDangnhapInputEnabled(true);
-            //btnLuuTK.IsEnabled = true;
-            //txtMaTKDN.IsReadOnly = false; // Cho phép nhập mã TK mới
-            //_isAddingDangnhap = true;
-            //_isUpdatingDangnhap = false;
-            //_selectedDangnhap = null;
-            //txtMaTKDN.Focus();
-        }
-
-        private void BtnSuaTK_Click(object sender, RoutedEventArgs e)
-        {
-            if (dgTaiKhoan.SelectedItem is Dangnhap tkToEdit)
+            string keyword = txtTimKiem.Text.Trim();
+            if (string.IsNullOrEmpty(keyword))
             {
-                _selectedDangnhap = tkToEdit;
-                DisplayDangnhap(tkToEdit); // Hiển thị lên các textbox tài khoản nếu có
-
-                MessageBox.Show($"Bạn đang sửa thông tin tài khoản: {tkToEdit.Taikhoan}. Vui lòng chỉnh sửa các trường tài khoản và nhấn Lưu Tài Khoản (nếu có các trường nhập liệu riêng).", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                // Ví dụ nếu bạn có các control riêng:
-                SetDangnhapInputEnabled(true);
-                btnLuuTK.IsEnabled = true;
-                //txtMaTKDN.IsReadOnly = true; // Mã TK không cho sửa
-                _isAddingDangnhap = false;
-                _isUpdatingDangnhap = true;
+                LoadData(); // Nếu không có từ khóa, tải lại toàn bộ dữ liệu
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn một tài khoản để sửa.", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                try
+                {
+                    dgNhanVien.ItemsSource = _nhanvienService.SearchByName(keyword);
+                    // Không cần tìm kiếm riêng tài khoản, vì chúng ta tìm NV và hiển thị TK theo NV
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi tìm kiếm: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Console.WriteLine($"Error searching Nhanvien: {ex.ToString()}");
+                }
             }
         }
 
-        private void BtnXoaTK_Click(object sender, RoutedEventArgs e)
-        {
-            if (dgTaiKhoan.SelectedItem is Dangnhap tkToDelete)
-            {
-                MessageBoxResult result = MessageBox.Show($"Bạn có chắc muốn xóa tài khoản '{tkToDelete.Taikhoan}' không? Thao tác này sẽ không được thực hiện nếu có nhân viên đang liên kết với tài khoản này.", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
-                {
-                    try
-                    {
-                        _dangnhapService.Delete(tkToDelete.Matk);
-                        MessageBox.Show("Xóa tài khoản thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        LoadData(); // Tải lại dữ liệu sau khi xóa
-                    }
-                    catch (InvalidOperationException ex) // Bắt lỗi nếu có nhân viên liên kết
-                    {
-                        MessageBox.Show(ex.Message, "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Lỗi khi xóa tài khoản: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("Vui lòng chọn một tài khoản để xóa.", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-        }
-
-        private void BtnLuuTK_Click(object sender, RoutedEventArgs e)
-        {
-            //Để hàm này hoạt động, bạn cần có các TextBox riêng biệt cho Mã TK, Tên TK, Mật khẩu, Loại TK trong XAML
-            Dangnhap tkToSave = GetDangnhapFromInputs();
-            if (tkToSave == null) return; // Validation thất bại
-
-            try
-            {
-                if (_isAddingDangnhap)
-                {
-                    // Kiểm tra trùng mã TK
-                    if (_dangnhapService.GetById(tkToSave.Matk) != null)
-                    {
-                        MessageBox.Show("Mã tài khoản này đã tồn tại. Vui lòng chọn mã khác.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
-                    // Kiểm tra trùng tên tài khoản (username)
-                    if (_dangnhapService.IsTaiKhoanExists(tkToSave.Taikhoan))
-                    {
-                        MessageBox.Show("Tên tài khoản này đã tồn tại. Vui lòng chọn tên khác.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
-                    _dangnhapService.Add(tkToSave);
-                    MessageBox.Show("Thêm tài khoản thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else if (_isUpdatingDangnhap)
-                {
-                    _dangnhapService.Update(tkToSave);
-                    MessageBox.Show("Cập nhật tài khoản thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-
-                LoadData(); // Tải lại dữ liệu sau khi lưu
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi lưu tài khoản: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            MessageBox.Show("Chức năng 'Lưu Tài Khoản' chưa được triển khai hoàn chỉnh vì thiếu các trường nhập liệu tài khoản riêng biệt.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
-
+        // Bỏ các hàm BtnTaoTK_Click, BtnSuaTK_Click, BtnXoaTK_Click, BtnLuuTK_Click vì đã tích hợp
+        // vào logic của nhân viên.
     }
 }
